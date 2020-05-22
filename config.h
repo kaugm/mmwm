@@ -97,8 +97,8 @@ static key keys[] = {
     /* minimize window to queue/pull window from queue
     {  MOD4,             XK_m,          minimize,          {NULL}},
     {  MOD4,             XK_n,          restore,           {NULL}}, */
-    /* move the current window to the center of the screen, floating */
-    {  MOD4,             XK_c,          centerwindow,      {NULL}},
+    /* float focused window and center it */
+    {  MOD4,             XK_j,          popout,            {NULL}},
     /* toggles inverted stacking modes (left/top stack) */
     {  MOD4,             XK_i,          invertstack,       {NULL}},
     /* toggle the scratchpad terminal, if enabled

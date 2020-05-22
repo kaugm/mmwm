@@ -228,7 +228,7 @@ static void change_desktop(const Arg *arg);
 static bool check_if_window_is_alien(xcb_window_t win, bool *isFloating, xcb_atom_t *wtype);
 static bool check_wmproto(xcb_window_t win, xcb_atom_t proto);
 static void centerfloating(client *c);
-static void centerwindow();
+static void popout();
 static void cleanup(void);
 static void cleanup_display(void);
 static int client_borders(const client *c);
@@ -983,21 +983,21 @@ static void centerfloating(client *c)
     free(wa);
 }
 
-/*
- * centerfloating(); wrapper
- */
-void centerwindow(void)
+void popout(void)
 {
-    if (!M_CURRENT)
-        return;
-
-    if (!M_CURRENT->isfloating
-     && !M_CURRENT->istransient) {
-        float_client(M_CURRENT);
-        tile();
+	if (!M_CURRENT)
+		return;
+	if (!M_CURRENT->isfloating) {
+		float_client(M_CURRENT);
+		tile();
+	}
+	else {
+		unfloat_client(M_CURRENT);
+		tile();
+    	update_current(M_CURRENT);
+    	desktopinfo();
     }
-
-    centerfloating(M_CURRENT);
+	centerfloating(M_CURRENT);
 }
 
 /* remove all windows in all desktops by sending a delete message */
