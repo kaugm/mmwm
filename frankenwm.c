@@ -3012,6 +3012,8 @@ void swap_modes()
 {
 	if (M_MODE == TILE) {
 		M_MODE = EQUAL;
+		if (M_INVERT)
+			M_INVERT = !M_INVERT;
 	}
 	else {
 		M_MODE = TILE;
