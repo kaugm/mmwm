@@ -987,7 +987,7 @@ void popout(void)
 {
 	if (!M_CURRENT)
 		return;
-	if (!M_CURRENT->isfloating) {
+	if (!M_CURRENT->isfloating && !M_CURRENT->istransient) {
 		float_client(M_CURRENT);
 		tile();
 	}
@@ -1958,6 +1958,8 @@ void maprequest(xcb_generic_event_t *e)
     for (select_desktop(current_desktop_number), c = M_HEAD, n = 0;
 		c; c = M_GETNEXT(c), ++n)
 	while (n > 1) {
+		if (current_desktop_number == DESKTOPS-1)
+			break;
 		change_desktop(&(Arg)
 			{.i = (DESKTOPS + current_desktop_number + 1) % DESKTOPS});
 		n = 0;
