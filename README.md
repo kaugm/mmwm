@@ -22,7 +22,9 @@ Hotkey & function to swap between the 2 main tiling modes
 Hotkey & function to pop a window in and out of floating mode
 More to come...
 
-# _From FrankenWM's README_
+
+
+### _From FrankenWM's README_
 
 Installation
 ------------
