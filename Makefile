@@ -1,4 +1,4 @@
-WMNAME  = frankenwm
+WMNAME  = mmwm
 
 PREFIX ?= /usr/local
 BINDIR ?= ${PREFIX}/bin

@@ -1,0 +1,160 @@
+.TH MMWM 1 mmwm
+.SH NAME
+Modern Minimalistic Window Manager \- Stripped down FrankenWM with a focus on automated window management.
+.SH SYNOPSIS
+.B mmwm
+.RB [ \-v ]
+.SH DESCRIPTION
+mmWM is a dynamic tiling window manager that is heavily based on FrankenWM. It features 2 tiling modes, floating window support, and automated desktop switching once the current virtual desktop becomes full.
+.P
+.SH MODES
+There are currently 3 base layouts:
+.P
+.I Vertical Stack (Tile)
+where the master window fill a large space either left or right and the rest of
+the windows is stacked on the other side,
+
+  ___________        ___________
+ |       | 1 |      | 1 |       |
+ |   M   |___|  or  |___|   M   |
+ |       | 2 |      | 2 |       |
+ |_______|___|      |___|_______|
+
+.I Equal mode
+where all the windows have exactly the same space on the screen, sorting them
+in columns. Row sorting is disabled as it looks strange with more than 2 windows.
+
+  ___________ 
+ |   |   |   |
+ | M | 1 | 2 |
+ |   |   |   |
+ |___|___|___|
+
+.I Floating mode
+where, windows can move and be resized freely in the screen space. Windows
+retain their floating status until the user switches to a tiling mode. The 
+user can "pop" windows out on a per window basis.
+
+  ___________
+ ||     | 1| |
+ ||  M  |__| |
+ ||_____|    |
+ |___________|
+
+When hitting a tiling mode shortcut while being already in this tiling mode,
+mmWM will catch all floating windows and reset them back to tiling as
+well.
+
+.SH OPTIONS
+.TP
+.B \-v
+prints version information to standard output, then exits.
+.SH USAGE
+.SS Status bar
+mmwm does not provide a status bar. Consistent with the Unix philosophy,
+mmwm provides information to the status bar or panel of choice via text. 
+Please see FrankenWM's github page for premade bar scripts.
+.SS Keyboard and mouse commands
+All of
+.I mmwm's
+commands can be customized by editing
+.I config.h
+and recompiling.
+
+.SH DEFAULT SHORTCUTS
+
+.SS LAYOUTS
+
+.TP
+.B Mod4\-t
+Sets tiled layout
+.TP
+.B Mod4\-e
+Sets equal layout
+.TP
+.B Mod4\-m
+Switch back and forth from tiled to equal layouts
+.TP
+
+
+.SS WINDOW SELECTION
+
+.TP
+.B Mod1\-{Shift}\-Tab
+Focus next/previous window (Alt+Tab functionality)
+.TP
+.B Mod4\-{Up,Down}
+Move the focussed window down/up the stack
+.TP
+.B Mod4\-w
+Swaps the focused window to/from master area
+.TP
+.B Mod4\-f
+Maximize/fullscreen the current window
+.TP
+.B Mod4\-i
+Toggle the inverting status, which enables alternate versions of existing
+layout modes
+
+.SS COMMANDS
+
+.TP
+.B Mod4\--Return
+Start
+.BR urxvt (1)
+.TP
+.B Mod4\-r
+Start
+.BR rofi (1)
+.TP
+.B Mod4\-q
+Close the focused window
+.TP
+.B Mod4\-Control\-{q}
+Quit mmwm
+
+.SS VIRTUAL DESKTOPS
+
+.TP
+.B Mod4\-{1..n}
+Select the nth workspace. By default,
+.I mmwm
+is configured with 10 workspaces
+.TP
+.B Mod4\-Shift\-{1..n}
+Move the focused window to the nth workspace
+
+.SS FLOATING WINDOWS
+
+.TP
+.B Mod4\-j
+Pop window in and out of floating mode
+
+.SS MOUSE
+
+.TP
+.B Mod4\-Button1
+Dragging the mouse will move the selected window
+.TP
+.B Mod4\-Button3
+Dragging the mouse will resize the selected window
+
+.SH CUSTOMIZATION
+.I mmwm
+is customized by copying
+.I config.def.h
+to
+.I config.h
+, customizing it and (re)compiling the source code.
+.SH SEE ALSO
+.BR rofi (1)
+.BR urxvt (1)
+.SH BUGS
+.I mmWM
+is based soley off of FrankenWM. There is a possibility of bugs due to certain functions being stripped out and others added. Before submitting an issue, please check FrankenWM's issue page first. If the bug pertains to an added feature specific to mmWM, please report the bug to mmwm's author.
+.SH AUTHOR
+kaugm (with all the hard work done by sulami in FrankenWM)
+.SH BASED ON WORKS OF
+https://github.com/sulami/FrankenWM
+Hours of stackoverflow
+
