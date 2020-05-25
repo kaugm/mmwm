@@ -19,6 +19,7 @@
 #define FOLLOW_MOUSE    False     /* Focus the window the mouse just entered */
 #define FOLLOW_WINDOW   False     /* Follow the window when moved to a different desktop */
 #define CLICK_TO_FOCUS  True      /* Focus an unfocused window when clicked */
+#define WIN_LIMIT		3		  /* Maximum number of windows allowed per desktop */
 #define BORDER_WIDTH    8         /* window border width */
 #define SCRATCH_WIDTH   0         /* scratch window border width, 0 to disable */
 #define FOCUS           "#eeeeee" /* focused window border color   */
@@ -62,9 +63,9 @@ static const AppRule rules[] = { \
  * pressing a key (combination). The last argument should ALWAYS be a null
  * pointer. scrpcmd needs to be defined and different from all other commands!
  */
-static const char *termcmd[] = { "urxvt",     NULL };
+static const char *termcmd[] = { "xterm",     NULL };
 static const char *menucmd[] = { "rofi","-show","run", NULL };
-static const char *scrpcmd[] = { "urxvt", "-T", "scratchpad", NULL };
+static const char *scrpcmd[] = { "xterm", "-T", "scratchpad", NULL };
 
 #define DESKTOPCHANGE(K,N) \
     {  MOD4,             K,              change_desktop, {.i = N}}, \
@@ -96,10 +97,7 @@ static key keys[] = {
     /* change tiling mode: TILE or EQUAL */
     {  MOD4|SHIFT,       XK_t,          switch_mode,       {.i = TILE}},
     /*{  MOD4|SHIFT,       XK_m,          switch_mode,       {.i = MONOCLE}},
-    {  MOD4|SHIFT,       XK_b,          switch_mode,       {.i = BSTACK}},
-    {  MOD4|SHIFT,       XK_g,          switch_mode,       {.i = GRID}},
-    {  MOD4|SHIFT,       XK_f,          switch_mode,       {.i = FIBONACCI}},
-    {  MOD4|SHIFT,       XK_d,          switch_mode,       {.i = DUALSTACK}}, TODO: getting rid of other modes*/
+    {  MOD4|SHIFT,       XK_b,          switch_mode,       {.i = BSTACK}}, */
     {  MOD4|SHIFT,       XK_e,          switch_mode,       {.i = EQUAL}},
     {  MOD4,			 XK_m,			swap_modes,	   	   {NULL}},
     /* spawn terminal, dmenu, w/e you want to */

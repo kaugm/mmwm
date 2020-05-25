@@ -55,7 +55,7 @@ enum { _NET_WM_STATE_REMOVE, _NET_WM_STATE_ADD, _NET_WM_STATE_TOGGLE };
 #define MONITORS 1
 
 enum { RESIZE, MOVE };
-enum { TILE, MONOCLE, BSTACK, GRID, FIBONACCI, DUALSTACK, EQUAL, MODES };
+enum { TILE, MONOCLE, BSTACK, EQUAL, MODES };
 
 /* argument structure to be passed to function by config.h
  * com  - a command to run
@@ -240,10 +240,8 @@ static client *create_client(xcb_window_t win, xcb_atom_t wtype);
 static bool deletewindow(xcb_window_t w);
 static void desktopinfo(void);
 static void destroynotify(xcb_generic_event_t *e);
-static void dualstack(int hh, int cy);
 static void enternotify(xcb_generic_event_t *e);
 static void equal(int h, int y);
-static void fibonacci(int h, int y);
 static client *find_client(xcb_window_t w);
 static desktop *find_desktop(unsigned int n);
 /* static monitor *find_monitor(unsigned int n);  future enhancement */
@@ -251,7 +249,6 @@ static void float_client(client *c);
 static unsigned int getcolor(char *color);
 static void grabbuttons(client *c);
 static void grabkeys(void);
-static void grid(int h, int y);
 static void invertstack();
 static void keypress(xcb_generic_event_t *e);
 static void killclient();
@@ -352,10 +349,7 @@ static void (*events[XCB_NO_OPERATION])(xcb_generic_event_t *e);
 static void (*layout[MODES])(int h, int y) = {
     [TILE] = stack,
     [BSTACK] = stack,
-    [GRID] = grid,
     [MONOCLE] = monocle,
-    [FIBONACCI] = fibonacci,
-    [DUALSTACK] = dualstack,
     [EQUAL] = equal,
 };
 
@@ -1395,83 +1389,6 @@ void destroynotify(xcb_generic_event_t *e)
     desktopinfo();
 }
 
-/* dualstack layout (three-column-layout, tcl in dwm) */
-void dualstack(int hh, int cy)
-{
-    client *c = NULL, *t = NULL;
-    int n = 0, z = hh, d = 0, l = 0, r = 0, cb = cy,
-        ma = (M_INVERT ? M_WH : M_WW) * MASTER_SIZE + M_MASTER_SIZE;
-
-    /* count stack windows and grab first non-floating, non-maximize window */
-    for (t = M_HEAD; t; t = M_GETNEXT(t)) {
-        if (!ISFMFTM(t)) {
-            if (c)
-                ++n;
-            else
-                c = t;
-        }
-    }
-
-    l = (n - 1) / 2 + 1; /* left stack size */
-    r = n - l;          /* right stack size */
-
-    if (!c) {
-        return;
-    } else if (!n) {
-        int borders = client_borders(c);
-        xcb_move_resize(dis, c->win, M_GAPS, cy + M_GAPS,
-                        M_WW - 2 * (borders + M_GAPS),
-                        hh - 2 * (borders + M_GAPS), &c->position_info);
-        return;
-    }
-
-    /* tile the first non-floating, non-maximize window to cover the master area */
-    int borders = client_borders(c);
-    if (current_display->di.invert)
-        xcb_move_resize(dis, c->win, M_GAPS,
-                        cy + (hh - ma) / 2 + M_GAPS,
-                        M_WW - 2 * (borders + M_GAPS),
-                        n > 1 ? ma - 2 * M_GAPS - 2 * borders
-                              : ma + (hh - ma) / 2 - 2 * borders - 2 * M_GAPS, &c->position_info);
-    else
-        xcb_move_resize(dis, c->win, (M_WW - ma) / 2 + borders + M_GAPS,
-                        cy + M_GAPS,
-                        n > 1 ? (ma - 4 * borders - 2 * M_GAPS)
-                              : (ma + (M_WW - ma) / 2 - 3 * borders - 2 * M_GAPS),
-                        hh - 2 * (borders + M_GAPS), &c->position_info);
-
-    int cx = M_GAPS,
-        cw = (M_WW - ma) / 2 - borders - M_GAPS,
-        ch = z;
-        cy += M_GAPS;
-
-    /* tile the non-floating, non-maximize stack windows */
-    for (c = M_GETNEXT(c); c; c = M_GETNEXT(c)) {
-        for (d = 0, t = M_HEAD; t != c; t = M_GETNEXT(t), d++);
-        if (ISFMFTM(c))
-            continue;
-        int borders = client_borders(c);
-        if (M_INVERT) {
-            if (d == l + 1) /* we are on the -right- bottom stack, reset cy */
-                cx = M_GAPS;
-            if (d > 1 && d != l + 1)
-                cx += (M_WW - M_GAPS) / (d <= l ? l : r);
-            xcb_move_resize(dis, c->win,
-                        cx, (d <= l) ? cy : cy + (hh - ma) / 2 + ma - M_GAPS,
-                        (M_WW - M_GAPS) / (d <= l ? l : r) - 2 * borders - M_GAPS,
-                        (hh - ma) / 2 - 2 * borders - M_GAPS, &c->position_info);
-        } else {
-            if (d == l + 1) /* we are on the right stack, reset cy */
-                cy = cb + M_GAPS;
-            if (d > 1 && d != l + 1)
-                cy += (ch - M_GAPS) / (d <= l ? l : r);
-            xcb_move_resize(dis, c->win,
-                        d <= l ? cx : M_WW - cw - 2 * borders - M_GAPS, cy, cw,
-                        (ch - M_GAPS) / (d <= l ? l : r) - 2 * borders - M_GAPS, &c->position_info);
-        }
-    }
-}
-
 /*
  * when the mouse enters a window's borders
  * the window, if notifying of such events (EnterWindowMask)
@@ -1535,61 +1452,6 @@ void equal(int h, int y)
                             y + M_GAPS,
                             M_WW / n - 2 * borders - (c == M_HEAD ? 2 : 1) * M_GAPS,
                             h - 2 * borders - 2 * M_GAPS, &c->position_info);
-    }
-}
-
-/*
- * fibonacci mode / fibonacci layout
- * tile the windows based on the fibonacci series pattern.
- * arrange windows in such a way that every new window shares
- * half the space of the space taken by the last window
- * inverting changes between right/down and right/up
- */
-void fibonacci(int h, int y)
-{
-    int borders = borders;
-    if (M_HEAD)
-        borders = client_borders(M_HEAD);
-
-    int j = -1, x = M_GAPS, tt = 0,
-        cw = M_WW - 2 * M_GAPS - 2 * borders,
-        ch = h - 2 * M_GAPS - 2 * borders;
-
-    for (client *n, *c = M_HEAD; c; c = M_GETNEXT(c)) {
-        int borders = client_borders(c);
-        if (ISFMFTM(c))
-            continue;
-        else
-            j++;
-        for (n = M_GETNEXT(c); n; n = M_GETNEXT(n))
-            if (!ISFMFTM(n))
-                break;
-
-        /*
-         * not the last window in stack ? -> half the client size, and also
-         * check if we have too many windows to keep them larger than MINWSZ
-         */
-        if (n
-            && ch > MINWSZ * 2 + borders + M_GAPS
-            && cw > MINWSZ * 2 + borders + M_GAPS) {
-            (j & 1) ? (ch = ch / 2 - borders - M_GAPS / 2)
-                    : (cw = cw / 2 - borders - M_GAPS / 2);
-            tt = j;
-        }
-
-        /* not the master client ? -> shift client right or down (or up) */
-        if (j) {
-            (j & 1) ? (x = x + cw + 2 * borders + M_GAPS)
-                    : (y = M_INVERT ? (y - ch - 2 * borders - M_GAPS)
-                                    : (y + ch + 2 * borders + M_GAPS));
-
-            if (j & 1 && n && M_INVERT)
-                y += ch + 2 * borders + M_GAPS;
-        }
-
-        /* if the window does not fit in the stack, do not jam it in there */
-        if (j <= tt + 1)
-            xcb_move_resize(dis, c->win, x, y + M_GAPS, cw, ch, &c->position_info);
     }
 }
 
@@ -1704,44 +1566,6 @@ void grabkeys(void)
     }
 }
 
-/* arrange windows in a grid */
-void grid(int hh, int cy)
-{
-    int n = 0, cols = 0, cn = 0, rn = 0, i = -1;
-
-    for (client *c = M_HEAD; c; c = M_GETNEXT(c))
-        if (!ISFMFTM(c))
-            ++n;
-    if (!n)
-        return;
-    for (cols = 0; cols <= n / 2; cols++)
-        if (cols * cols >= n)
-            break; /* emulate square root */
-    if (n == 5)
-        cols = 2;
-
-    int rows = n / cols,
-        ch = hh - M_GAPS,
-        cw = (M_WW - M_GAPS) / (cols ? cols : 1);
-    for (client *c = M_HEAD; c; c = M_GETNEXT(c)) {
-        int borders = client_borders(c);
-        if (ISFMFTM(c))
-            continue;
-        else
-            ++i;
-        if (i / rows + 1 > cols - n % cols)
-            rows = n / cols + 1;
-        xcb_move_resize(dis, c->win, cn * cw + M_GAPS,
-                        cy + rn * ch / rows + M_GAPS,
-                        cw - 2 * borders - M_GAPS,
-                        ch / rows - 2 * borders - M_GAPS, &c->position_info);
-        if (++rn >= rows) {
-            rn = 0;
-            cn++;
-        }
-    }
-}
-
 /* invert v-stack left-right */
 void invertstack()
 {
@@ -1769,6 +1593,9 @@ void keypress(xcb_generic_event_t *e)
  * send a delete message and remove the client */
 void killclient()
 {
+	int n = 0;
+	client *c = NULL, *t = NULL;
+
     if (!M_CURRENT)
         return;
     if (!deletewindow(M_CURRENT->win)) {
@@ -1778,7 +1605,35 @@ void killclient()
     else {
         DEBUG("client deleted");
     }
-    removeclient(M_CURRENT);
+    /* this section is for switching to previous (-1) desktop when the last window on it is killed */
+    /* count stack windows and grab first non-floating, non-maximize window */
+    for (t = M_HEAD; t; t = M_GETNEXT(t)) {
+        if (!ISFMFTM(t)) {
+            if (c)
+                ++n;
+            else
+                c = t;
+        }
+    }
+	/* just this line below was the original piece of code */
+	removeclient(M_CURRENT);
+	while (n < 1) {
+		if (current_desktop_number == 0)
+			return;
+		change_desktop(&(Arg)
+			{.i = (DESKTOPS + current_desktop_number - 1) % DESKTOPS});
+		n = 0;
+		/* count stack windows and grab first non-floating, non-maximize window */
+		for (t = M_HEAD; t; t = M_GETNEXT(t)) {
+			if (!ISFMFTM(t)) {
+				if (c)
+					++n;
+				else
+					c = t;
+			}
+		}
+	}
+
 }
 
 static bool check_wmproto(xcb_window_t win, xcb_atom_t proto)
@@ -1880,6 +1735,7 @@ void maprequest(xcb_generic_event_t *e)
 
     bool follow = false;
     int cd = current_desktop_number, newdsk = current_desktop_number, border_width = -1, n = 0;
+    client *t = NULL;
 
     cookie = xcb_ewmh_get_wm_name_unchecked(ewmh, ev->window);
 
@@ -1917,18 +1773,34 @@ void maprequest(xcb_generic_event_t *e)
 	/* change to new desk if app rules apply
     if (cd != newdsk)
         select_desktop(newdsk); */
-    /* This section allows for moving to the next desktop if the current one is full */   
-    for (select_desktop(current_desktop_number), c = M_HEAD, n = 0;
-		c; c = M_GETNEXT(c), ++n)
-	while (n > 1) {
+    /* This section allows for moving to the next desktop if the current one is full */ 
+    int maxwin = WIN_LIMIT - 2; 
+	/* count stack windows and grab first non-floating, non-maximize window */
+    for (t = M_HEAD; t; t = M_GETNEXT(t)) {
+        if (!ISFMFTM(t)) {
+            if (c)
+                ++n;
+            else
+                c = t;
+        }
+    }
+	while (n > maxwin) {
 		if (current_desktop_number == DESKTOPS-1)
 			break;
 		change_desktop(&(Arg)
 			{.i = (DESKTOPS + current_desktop_number + 1) % DESKTOPS});
 		n = 0;
-		for (select_desktop(current_desktop_number), c = M_HEAD, n = 0;
-			c; c = M_GETNEXT(c), ++n);
+		/* count stack windows and grab first non-floating, non-maximize window */
+		for (t = M_HEAD; t; t = M_GETNEXT(t)) {
+			if (!ISFMFTM(t)) {
+				if (c)
+					++n;
+				else
+					c = t;
+			}
 		}
+	}
+	/* original add window code is the line below */
     c = addwindow(ev->window, wtype);
 
     xcb_icccm_get_wm_transient_for_reply(dis,
