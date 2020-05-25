@@ -3,24 +3,29 @@
 
 mmWM is a dynamic window manager that is heavily based off of FrankenWM. In fact, it is FrankenWM, but with many _unnecessary_ functions removed (and some unique features added). mmWM is designed to simplify a tiling workflow, with less, more logical hotkeys, and more automated window management.
 
-mmWM is designed to provide a minimalistic desktop as it prevents window overcrowding. If a desktop is _full_, mmWM will open the window on the next desktop. Likewise, if a window is the only one on a desktop, mmWM will switch to the previous desktop when the window is killed.
+mmWM is designed to provide a aesthetic and minimalistic desktop as it prevents window overcrowding. If a desktop is _full_, mmWM will open the window on the next desktop. Likewise, if a window is the only one on a desktop, mmWM will switch to the previous desktop when the window is killed to speed up your workflow.
+
+mmWM is lightweight. Smem outputs USS and PSS at 388k and 473k respectively.
+
+
 
 #### Modern and Minimalist Approach
 heavy gaps\
 simplified, fewer, and more logical keyboard shortcuts\
 2 tiling modes: Tile (master/slave) and Equal (and floating on a per window basis)
 Tiled windows are interacted with by the keyboard\
-Floating windows are interacted with by the mouse (except using the keyboard to pop them out)\
+Floating windows are interacted with by the mouse (except using the keyboard to pop them out)
 
 
 #### Added features
 #### --------------
-Opens window in next desktop if current desktop is full\
-Switches to previous desktop if last window on desktop is killed\
+Automated desktop switching when opening a new window in a _full_ desktop\
+Automated focusing on previous _populated_ desktop if last window on desktop is killed\
+User can define the maximum number of allowed windows per desktop
 Disabled inverting stack in equal mode (no horizontally maximized windows because they're ugly)\
 Hotkey & function to swap between the 2 main tiling modes\
 Hotkey & function to pop a window in and out of floating mode\
-More to come...\
+More to come...
 
 Installation
 ------------
