@@ -15,12 +15,12 @@ Floating windows are interacted with by the mouse (except using the keyboard to 
 
 #### Added features
 #### --------------
-Opens window in next desktop if current desktop is full
-Switches to previous desktop if last window on desktop is killed
-Disabled inverting stack in equal mode (no horizontally maximized windows because they're ugly)
-Hotkey & function to swap between the 2 main tiling modes
-Hotkey & function to pop a window in and out of floating mode
-More to come...
+Opens window in next desktop if current desktop is full\
+Switches to previous desktop if last window on desktop is killed\
+Disabled inverting stack in equal mode (no horizontally maximized windows because they're ugly)\
+Hotkey & function to swap between the 2 main tiling modes\
+Hotkey & function to pop a window in and out of floating mode\
+More to come...\
 
 Installation
 ------------
