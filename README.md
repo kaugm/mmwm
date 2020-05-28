@@ -3,7 +3,7 @@
 
 mmWM is a dynamic window manager that is heavily based off of FrankenWM. In fact, it is FrankenWM, but with many _unnecessary_ functions removed (and some unique features added). mmWM is designed to simplify a tiling workflow, with less, more logical hotkeys, and more automated window management.
 
-mmWM is designed to provide a aesthetic and minimalistic desktop as it prevents window overcrowding. If a desktop is _full_, mmWM will open the window on the next desktop. Likewise, if a window is the only one on a desktop, mmWM will switch to the previous desktop when the window is killed to speed up your workflow.
+mmWM is designed to provide an aesthetic and minimalistic desktop as it prevents window overcrowding. If a desktop is _full_, mmWM will open the window on the next desktop. Likewise, if a window is the only one on a desktop, mmWM will switch to the previous desktop when the window is killed to speed up your workflow.
 
 mmWM is lightweight. `smem` outputs USS and PSS at 388k and 473k respectively.
 
@@ -23,11 +23,11 @@ Automated focusing on previous _populated_ desktop if last window on desktop is 
 User can define the maximum number of allowed windows per desktop\
 Disabled inverting stack in equal mode (no horizontally maximized windows because they're ugly)\
 Hotkey & function to swap between the 2 main tiling modes\
-Hotkey & function to pop a window in and out of floating mode\
-More to come...
+Hotkey & function to pop a window in and out of floating mode
 
 #### TODO
-Still some vestiges of unused features: scratchpad, monocle mode & bstack mode
+Still some vestiges of unused features: scratchpad, monocle mode & bstack mode\
+Per application rules -> which apps get their own desktop
 
 Installation
 ------------
@@ -48,6 +48,7 @@ Configuration
 -------------
 
 You can configure mmWM by editing `config.h` before compiling.
+You can add / remove functions by editing `mmwm.c` and searching for `void [function]` and making changes there.
 
 Usage
 -----
