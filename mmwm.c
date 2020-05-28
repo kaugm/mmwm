@@ -1770,11 +1770,9 @@ void maprequest(xcb_generic_event_t *e)
 
         xcb_ewmh_get_utf8_strings_reply_wipe(&wtitle);
     }
-	/* change to new desk if app rules apply
-    if (cd != newdsk)
-        select_desktop(newdsk); */
+
     /* This section allows for moving to the next desktop if the current one is full */ 
-    int maxwin = WIN_LIMIT - 2; 
+    int maxwin = WIN_LIMIT - 2;
 	/* count stack windows and grab first non-floating, non-maximize window */
     for (t = M_HEAD; t; t = M_GETNEXT(t)) {
         if (!ISFMFTM(t)) {
