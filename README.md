@@ -47,7 +47,7 @@ The packages in Arch Linux needed for example would be
 Configuration
 -------------
 
-You can configure mmWM by editing `config.h` before compiling.
+You can configure mmWM by editing `config.h` before compiling.\
 You can add / remove functions by editing `mmwm.c` and searching for `void [function]` and making changes there.
 
 Usage
