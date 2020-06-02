@@ -5,7 +5,7 @@ mmWM is a dynamic window manager that is heavily based off of FrankenWM. In fact
 
 mmWM is designed to provide an aesthetic and minimalistic desktop as it prevents window overcrowding. If a desktop is _full_, mmWM will open the window on the next desktop. Likewise, if a window is the only one on a desktop, mmWM will switch to the previous desktop when the window is killed to speed up your workflow.
 
-![mmwm thumbnail](mmwm.jpg)
+![mmwm thumbnail](mdwm.jpg)
 
 mmWM is lightweight. `smem` outputs USS and PSS at 388k and 473k respectively.
 
