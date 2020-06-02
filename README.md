@@ -31,7 +31,7 @@ Solitary windows on the desktop now have borders
 
 #### TODO
 Still some vestiges of unused features: scratchpad, monocle mode & bstack mode\
-Per application rules -> which apps get their own desktop
+Clean up the code
 
 Installation
 ------------
@@ -57,7 +57,15 @@ You can add / remove functions by editing `mmwm.c` and searching for `void [func
 Usage
 -----
 
-man mmwm
+Without panel: Add the following to your `.xinitrc`
+
+    $ exec mmwm &
+
+With panel: Download a panel script from [FrankenWM's Github page](https://gist.github.com/sulami/d6a53179d6d7479e0709), make it executable, and save it somewhere\
+Add the following to your `.xinitrc`
+
+    $ exec [PATH TO BAR SCRIPT]
+
 
 Thanks
 ------
