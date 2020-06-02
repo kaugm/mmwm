@@ -12,7 +12,7 @@
 #define SHOW_PANEL      True      /* show panel by default on exec */
 #define TOP_PANEL       True      /* False means panel is on bottom */
 #define PANEL_HEIGHT    30        /* 0 for no space for panel, thus no panel */
-#define DEFAULT_MODE    TILE     /* TILE MONOCLE BSTACK GRID FIBONACCI EQUAL */
+#define DEFAULT_MODE    TILE     /* TILE EQUAL */
 #define ATTACH_ASIDE    True      /* False means new window is master */
 #define FOLLOW_MOUSE    False     /* Focus the window the mouse just entered */
 #define FOLLOW_WINDOW   False     /* Follow the window when moved to a different desktop */
@@ -21,7 +21,7 @@
 #define BORDER_WIDTH    8         /* window border width */
 #define SCRATCH_WIDTH   0         /* scratch window border width, 0 to disable */
 #define FOCUS           "#eeeeee" /* focused window border color   */
-#define UNFOCUS         "#1d383e" /* unfocused window border color */
+#define UNFOCUS         "#CAB59E" /* unfocused window border color */
 #define SCRATCH         "#cc0000" /* scratchpad border color */
 #define DESKTOPS        10        /* number of desktops - edit DESKTOPCHANGE keys to suit */
 #define DEFAULT_DESKTOP 0         /* the desktop to focus on exec */
@@ -36,19 +36,6 @@
 #define CLOSE_SCRATCHPAD True     /* close scratchpad on quit */
 #define SCRPDNAME       "scratchpad" /* the name of the scratchpad window */
 /*#define EWMH_TASKBAR    True       Commenting out for bar to work */
-
-/*
- * Applicaton specific rules
- * -1 for current desktop, > 1 for its own desktop (+1 desktop switching)
- * Sadly, this can not be empty (for now), so enter something non-existent if
- * you do not wish to use this functionality.
- */
-static const AppRule rules[] = { \
-    /* title regex  desktop  follow  float border_with */
-    { "GNU Image",  -1,      False,  True, BORDER_WIDTH },
-    { "Firefox",    -1,      False,  False, BORDER_WIDTH },
-    { "Geany",		-1,		False,	False, BORDER_WIDTH },
-};
 
 /* helper for spawning shell commands, usually you don't edit this */
 #define SHCMD(cmd) {.com = (const char*[]){"/bin/sh", "-c", cmd, NULL}}

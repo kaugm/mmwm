@@ -208,19 +208,6 @@ typedef struct lifo {
     client *c;
 } lifo;
 
-/* define behavior of certain applications
- * configured in config.h
- * class    - the class or name of the instance
- * desktop  - what desktop it should be spawned at
- * follow   - whether to change desktop focus to the specified desktop
- */
-typedef struct {
-    const char *class;
-    const int desktop;
-    const bool follow, floating;
-    const int border_width;
-} AppRule;
-
  /* function prototypes sorted alphabetically */
 static client *addwindow(xcb_window_t w, xcb_atom_t wtype);
 static void buttonpress(xcb_generic_event_t *e);
@@ -335,7 +322,6 @@ static display *current_display = NULL;
 
 static xcb_ewmh_connection_t *ewmh;
 static xcb_atom_t wmatoms[WM_COUNT];
-static regex_t appruleregex[LENGTH(rules)];
 static xcb_key_symbols_t *keysyms;
 
 /* events array
@@ -1017,9 +1003,6 @@ void cleanup(void)
 
     xcb_delete_property(dis, screen->root, ewmh->_NET_SUPPORTED);
     xcb_destroy_window(dis, checkwin);
-
-    for (unsigned int i = 0; i < LENGTH(rules); i++)
-        regfree(&appruleregex[i]);
 
     cleanup_display();
 
@@ -1734,7 +1717,7 @@ void maprequest(xcb_generic_event_t *e)
 
     DEBUG("event is valid");
 
-    bool follow = false;
+    bool follow = true;
     int cd = current_desktop_number, newdsk = current_desktop_number, border_width = -1, n = 0;
     client *t = NULL;
 
@@ -1757,18 +1740,7 @@ void maprequest(xcb_generic_event_t *e)
                                     XCB_ATOM_WINDOW, 32, 1, &scrpd->win);
             return;
         }
-
-        for (unsigned int i = 0; i < LENGTH(appruleregex); i++)
-            if (!regexec(&appruleregex[i], &wtitle.strings[0], 0, NULL, 0)) {
-                follow = rules[i].follow;
-                newdsk = (rules[i].desktop < 0 ||
-                          rules[i].desktop >= DESKTOPS) ? current_desktop_number
-                                                        : rules[i].desktop;
-                isFloating = rules[i].floating;
-                border_width = rules[i].border_width;
-                break;
-            }
-
+		
         xcb_ewmh_get_utf8_strings_reply_wipe(&wtitle);
     }
 
@@ -2332,11 +2304,6 @@ int setup(int default_screen)
     /* check if another wm is running */
     if (xcb_checkotherwm())
         err(EXIT_FAILURE, "error: other wm is running\n");
-
-    /* initialize apprule regexes */
-    for (unsigned int i = 0; i < LENGTH(rules); i++)
-        if (regcomp(&appruleregex[i], rules[i].class, 0))
-            err(EXIT_FAILURE, "error: failed to compile apprule regexes\n");
 
     /* initialize EWMH */
     ewmh = calloc(1, sizeof(xcb_ewmh_connection_t));
