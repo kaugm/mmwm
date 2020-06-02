@@ -34,14 +34,11 @@
 #define USE_SCRATCHPAD  False     /* enable the scratchpad functionality */
 #define CLOSE_SCRATCHPAD True     /* close scratchpad on quit */
 #define SCRPDNAME       "scratchpad" /* the name of the scratchpad window */
-/*#define EWMH_TASKBAR    True       Commenting out for bar to work */
 
-/* helper for spawning shell commands, usually you don't edit this */
+/* Shell command helper - DO NOT EDIT */
 #define SHCMD(cmd) {.com = (const char*[]){"/bin/sh", "-c", cmd, NULL}}
 
-/*
- * Shell commands
- */
+/* Shell commands */
 static const char *termcmd[] = { "xterm",     NULL };
 static const char *menucmd[] = { "rofi","-show","run", NULL };
 static const char *scrpcmd[] = { "xterm", "-T", "scratchpad", NULL };
@@ -50,31 +47,27 @@ static const char *scrpcmd[] = { "xterm", "-T", "scratchpad", NULL };
     {  MOD4,             K,              change_desktop, {.i = N}}, \
     {  MOD4|ShiftMask,   K,              client_to_desktop, {.i = N}},
 
-/*
- * Keybindings
- */
+/* Keybindings */
 static key keys[] = {
-    /* cycle between windows on desktop */
+    /* cycle between windows on desktop (alt+tab) */
     {  MOD1,             XK_Tab,        next_win,          {NULL}},
     {  MOD1|SHIFT,       XK_Tab,        prev_win,          {NULL}},
     /* move tiled windows to different positions*/
     {  MOD4,             XK_Down,       move_down,         {NULL}},
     {  MOD4,             XK_Up,         move_up,           {NULL}},
-    /* swap the current window with the master */
+    /* swap the current tiled window with the master */
     {  MOD4,             XK_w,          swap_master,       {NULL}},
-    /* maximize the current window */
+    /* maximize toggle for the current window */
     {  MOD4,             XK_f,          maximize,          {NULL}},
     /* float focused window and center it */
     {  MOD4,             XK_j,          popout,            {NULL}},
-    /* toggles inverted stacking mode for TILE layout. Slaves on left/right of master */
+    /* toggles inverted stacking of slave windows for TILE layout */
     {  MOD4,             XK_i,          invertstack,       {NULL}},
     /* change tiling mode: TILE or EQUAL */
     {  MOD4|SHIFT,       XK_t,          switch_mode,       {.i = TILE}},
-    /*{  MOD4|SHIFT,       XK_m,          switch_mode,       {.i = MONOCLE}},
-    {  MOD4|SHIFT,       XK_b,          switch_mode,       {.i = BSTACK}}, */
     {  MOD4|SHIFT,       XK_e,          switch_mode,       {.i = EQUAL}},
     {  MOD4,			 XK_m,			swap_modes,	   	   {NULL}},
-    /* spawn terminal, dmenu, w/e you want to */
+    /* spawn terminal, dmenu, anything you want to */
     {  MOD4,             XK_Return,     spawn,             {.com = termcmd}},
     {  MOD4,             XK_d,          spawn,             {.com = menucmd}},
     /* quit current window */
@@ -100,4 +93,3 @@ static Button buttons[] = {
     {  MOD4,    Button3,     mousemotion,   {.i = RESIZE}},
 };
 #endif
-
