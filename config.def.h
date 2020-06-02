@@ -12,7 +12,7 @@
 #define SHOW_PANEL      True      /* show panel by default on exec */
 #define TOP_PANEL       True      /* False means panel is on bottom */
 #define PANEL_HEIGHT    30        /* 0 for no space for panel, thus no panel */
-#define DEFAULT_MODE    EQUAL     /* TILE MONOCLE BSTACK GRID FIBONACCI EQUAL */
+#define DEFAULT_MODE    TILE     /* TILE MONOCLE BSTACK GRID FIBONACCI EQUAL */
 #define ATTACH_ASIDE    True      /* False means new window is master */
 #define FOLLOW_MOUSE    False     /* Focus the window the mouse just entered */
 #define FOLLOW_WINDOW   False     /* Follow the window when moved to a different desktop */
@@ -45,9 +45,9 @@
  */
 static const AppRule rules[] = { \
     /* title regex  desktop  follow  float border_with */
-    { "GNU Image",  -1,      False,  True, 0 },
-    { "Firefox",    -1,      False,  False, 0 },
-    { "Geany",		-1,		False,	False, 0 },
+    { "GNU Image",  -1,      False,  True, BORDER_WIDTH },
+    { "Firefox",    -1,      False,  False, BORDER_WIDTH },
+    { "Geany",		-1,		False,	False, BORDER_WIDTH },
 };
 
 /* helper for spawning shell commands, usually you don't edit this */

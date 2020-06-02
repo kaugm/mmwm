@@ -978,6 +978,7 @@ void popout(void)
 		return;
 	if (!M_CURRENT->isfloating && !M_CURRENT->istransient) {
 		float_client(M_CURRENT);
+		centerfloating(M_CURRENT);
 		tile();
 	}
 	else {
@@ -986,7 +987,7 @@ void popout(void)
     	update_current(M_CURRENT);
     	desktopinfo();
     }
-	centerfloating(M_CURRENT);
+
 }
 
 /* remove all windows in all desktops by sending a delete message */
@@ -2887,9 +2888,7 @@ void update_current(client *newfocus)   // newfocus may be NULL
         if (!c->isfullscreen) {
             xcb_change_window_attributes(dis, c->win, XCB_CW_BORDER_PIXEL,
                                     (c == M_CURRENT ? &win_focus : &win_unfocus));
-            xcb_border_width(dis, c->win, ((!MONOCLE_BORDERS && !M_GETNEXT(M_HEAD))
-                                        || (M_MODE == MONOCLE && !ISFMFTM(c) && !MONOCLE_BORDERS)
-                                           ) ? 0 : client_borders(c));
+            xcb_border_width(dis, c->win, client_borders(c));
         }
     }
 
