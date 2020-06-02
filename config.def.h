@@ -15,7 +15,7 @@
 #define DEFAULT_MODE    TILE     /* TILE EQUAL */
 #define ATTACH_ASIDE    True      /* False means new window is master */
 #define FOLLOW_MOUSE    False     /* Focus the window the mouse just entered */
-#define FOLLOW_WINDOW   False     /* Follow the window when moved to a different desktop */
+#define FOLLOW_WINDOW   True     /* Follow the window when moved to a different desktop */
 #define CLICK_TO_FOCUS  True      /* Focus an unfocused window when clicked */
 #define WIN_LIMIT		3		  /* Maximum number of windows allowed per desktop */
 #define BORDER_WIDTH    8         /* window border width */
@@ -28,7 +28,6 @@
 #define MINWSZ          50        /* minimum window size in pixels */
 #define USELESSGAP      128         /* the size of the useless gap in pixels */
 #define GLOBALGAPS      True      /* use the same gap size on all desktops */
-#define MONOCLE_BORDERS False     /* display borders in monocle mode */
 #define INVERT          False     /* use alternative modes by default */
 #define AUTOCENTER      True      /* automatically center windows floating by default */
 #define OUTPUT_TITLE    False     /* output the title of the currently active window */
@@ -41,9 +40,7 @@
 #define SHCMD(cmd) {.com = (const char*[]){"/bin/sh", "-c", cmd, NULL}}
 
 /*
- * Adjust and add these to the shortcuts below to launch anything you want by
- * pressing a key (combination). The last argument should ALWAYS be a null
- * pointer. scrpcmd needs to be defined and different from all other commands!
+ * Shell commands
  */
 static const char *termcmd[] = { "xterm",     NULL };
 static const char *menucmd[] = { "rofi","-show","run", NULL };
@@ -54,9 +51,7 @@ static const char *scrpcmd[] = { "xterm", "-T", "scratchpad", NULL };
     {  MOD4|ShiftMask,   K,              client_to_desktop, {.i = N}},
 
 /*
- * By default, all shortcuts use only Mod4 (+ Shift/Control), but you can use
- * Mod1 as well if you like to, I just prefer not to. (Update: handling
- * floating windows makes more sense when using Mod1 as well, so there's that)
+ * Keybindings
  */
 static key keys[] = {
     /* cycle between windows on desktop */

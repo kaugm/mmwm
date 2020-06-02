@@ -1,5 +1,3 @@
-/* see license for copyright and license */
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <err.h>
@@ -51,7 +49,6 @@ enum { _NET_WM_STATE_REMOVE, _NET_WM_STATE_ADD, _NET_WM_STATE_TOGGLE };
 #define BUTTONMASK      XCB_EVENT_MASK_BUTTON_PRESS|XCB_EVENT_MASK_BUTTON_RELEASE
 #define ISFMFTM(c)      (c->isfullscreen || c->ismaximized || c->isfloating || c->istransient || c->isminimized || c->type != ewmh->_NET_WM_WINDOW_TYPE_NORMAL)
 #define USAGE           "usage: mmwm [-h] [-v]"
-/* future enhancements */
 #define MONITORS 1
 
 enum { RESIZE, MOVE };
@@ -231,7 +228,6 @@ static void enternotify(xcb_generic_event_t *e);
 static void equal(int h, int y);
 static client *find_client(xcb_window_t w);
 static desktop *find_desktop(unsigned int n);
-/* static monitor *find_monitor(unsigned int n);  future enhancement */
 static void float_client(client *c);
 static unsigned int getcolor(char *color);
 static void grabbuttons(client *c);
@@ -698,23 +694,6 @@ static int xcb_checkotherwm(void)
     return 0;
 }
 
-/*
-static bool window_is_override_redirect(xcb_window_t win)
-{
-    xcb_get_window_attributes_reply_t *attr[1];
-    xcb_window_t windows[] = {win};
-    bool override = True;
-
-    xcb_get_attributes(windows, attr, 1);
-    if (attr[0]) {
-        if (!attr[0]->override_redirect)
-            override = False;
-        free(attr[0]);
-    }
-    return override;
-}
-*/
-
 /* find client in current_display by window id */
 static client *find_client(xcb_window_t w)
 {
@@ -732,17 +711,6 @@ static desktop *find_desktop(unsigned int n)
             d && d->num != n; d = (desktop *)get_next(&d->link)) ;
     return d;
 }
-
-/* find monitor in current_desktop by number */
-/*
-static monitor *find_monitor(unsigned int n)
-{
-    monitor *m;
-    for (m = (monitor *)get_head(&current_desktop->monitors);
-            m && m->num != n; m = (monitor *)get_next(&m->link)) ;
-    return m;
-}
-*/
 
 static void getparents(client *c, display **di, monitor **mo, desktop **de)
 {
@@ -973,7 +941,6 @@ void popout(void)
     	update_current(M_CURRENT);
     	desktopinfo();
     }
-
 }
 
 /* remove all windows in all desktops by sending a delete message */
@@ -1404,12 +1371,6 @@ void enternotify(xcb_generic_event_t *e)
     }
 }
 
-/*
- * equal mode
- * tile the windows in rows or columns, givin each window an equal amount of
- * screen space
- * will use rows when inverted and columns otherwise
- */
 void equal(int h, int y)
 {
     int n = 0, j = -1;
@@ -1501,35 +1462,6 @@ void grabbuttons(client *c)
                                 buttons[b].button,
                                 buttons[b].mask|modifiers[m]);
 }
-/*
-void grabbuttons(client *c)
-{
-    if (!c)
-        return;
-
-    xcb_ungrab_button(dis, XCB_BUTTON_INDEX_ANY, c->win, XCB_GRAB_ANY);
-    if (CLICK_TO_FOCUS)
-        xcb_grab_button(dis, 1, c->win, XCB_EVENT_MASK_BUTTON_PRESS,
-                        XCB_GRAB_MODE_SYNC, XCB_GRAB_MODE_ASYNC,
-                        XCB_WINDOW_NONE, XCB_CURSOR_NONE,
-                        (c == scrpd) ? XCB_BUTTON_INDEX_1 : XCB_BUTTON_INDEX_ANY,
-                        XCB_BUTTON_MASK_ANY);
-    else {
-        unsigned int modifiers[] = { 0, XCB_MOD_MASK_LOCK, numlockmask,
-                                     numlockmask|XCB_MOD_MASK_LOCK };
-
-        for (unsigned int b = 0; b < LENGTH(buttons); b++) {
-            for (unsigned int m = 0; m < LENGTH(modifiers); m++) {
-                    xcb_grab_button(dis, 1, c->win, XCB_EVENT_MASK_BUTTON_PRESS,
-                                    XCB_GRAB_MODE_SYNC, XCB_GRAB_MODE_ASYNC,
-                                    XCB_WINDOW_NONE, XCB_CURSOR_NONE,
-                                    buttons[b].button,
-                                    buttons[b].mask|modifiers[m]);
-            }
-        }
-    }
-}
-*/
 
 /* the wm should listen to key presses */
 void grabkeys(void)
@@ -1573,8 +1505,7 @@ void keypress(xcb_generic_event_t *e)
                 keys[i].func(&keys[i].arg);
 }
 
-/* explicitly kill a client - close the highlighted window
- * send a delete message and remove the client */
+/* explicitly kill a client - close the highlighted window */
 void killclient()
 {
 	int n = 0;
@@ -1928,7 +1859,7 @@ void mousemotion(const Arg *arg)
 /* each window should cover all the available screen space */
 void monocle(int hh, int cy)
 {
-    unsigned int b = MONOCLE_BORDERS ? 2 * client_borders(M_CURRENT) : 0;
+    unsigned int b = 0;
 
     for (client *c = M_HEAD; c; c = M_GETNEXT(c))
         if (!ISFMFTM(c))
@@ -2174,9 +2105,7 @@ void setmaximize(client *c, bool maximize)
         return;
 
     int borders = client_borders(c);
-    borders = (!M_GETNEXT(M_HEAD) ||
-               (M_MODE == MONOCLE && !ISFMFTM(c) && !MONOCLE_BORDERS)
-              ) ? 0 : borders;
+    borders = 0;
     xcb_border_width(dis, c->win, borders);
 
     if (maximize) {
@@ -2256,10 +2185,7 @@ void setfullscreen(client *c, bool fullscrn)
     }
     else {
         c->isfullscreen = False;
-        xcb_border_width(dis, c->win,
-                     (!M_GETNEXT(M_HEAD) ||
-                      (M_MODE == MONOCLE && !ISFMFTM(c) && !MONOCLE_BORDERS)
-                     ) ? 0 : client_borders(c));
+        xcb_border_width(dis, c->win, BORDER_WIDTH);
         xcb_remove_property(dis, c->win, ewmh->_NET_WM_STATE, ewmh->_NET_WM_STATE_FULLSCREEN);
         destroy_display(c);
     }
@@ -3150,5 +3076,3 @@ static void Update_Global_Strut(void)
     }
 }
 #endif /* EWMH_TASKBAR */
-
-/* vim: set ts=4 sw=4 expandtab :*/
