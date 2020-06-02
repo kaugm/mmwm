@@ -14,7 +14,7 @@ mmWM is lightweight. `smem` outputs USS and PSS at 388k and 473k respectively.
 #### Modern and Minimalist Approach
 Heavy gaps between windows\
 Slim, global borders for _all_ windows\
-No per-app rules. All windows start tiled and focused on current desktop\
+No per-app rules. All windows start tiled and focused on current desktop (unless desktop is _full_)\
 Simplified, fewer, and more logical keyboard shortcuts\
 2 tiling modes: Tile (master/slave) and Equal (and floating on a per window basis)\
 Tiled windows are interacted with by the keyboard\
@@ -32,7 +32,9 @@ Solitary and fullscreen windows on the desktop now have borders
 
 #### TODO
 Still some vestiges of unused features: scratchpad, monocle mode & bstack mode\
-Clean up the code
+Clean up the code\
+Update border color on the fly for theming
+
 
 Installation
 ------------
