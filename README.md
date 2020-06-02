@@ -1,13 +1,13 @@
 # mmWM
 #### Modern Minimalistic Window Manager (WIP, stripped down FrankenWM)
 
-mmWM is a dynamic window manager that is heavily based off of FrankenWM. In fact, it is FrankenWM, but with many _unnecessary_ functions removed (and some unique features added). mmWM is designed to simplify a tiling workflow, with less, more logical hotkeys, and more automated window management.
+mmWM is a dynamic window manager that is heavily based off of FrankenWM but 25% smaller. In fact, it is FrankenWM, but with many _unnecessary_ functions/features removed (and some unique features added). Its goal is to simplify your tiling workflow, with less, more logical hotkeys, and more automated window management.
 
 mmWM is designed to provide an aesthetic and minimalistic desktop as it prevents window overcrowding. If a desktop is _full_, mmWM will open the window on the next desktop. Likewise, if a window is the only one on a desktop, mmWM will switch to the previous desktop when the window is killed to speed up your workflow.
 
 ![mmwm thumbnail](mmwm.jpg)
 
-mmWM is lightweight. `smem` outputs USS and PSS at 384k and 439k respectively.
+mmWM is lightweight. `smem` outputs USS and PSS at 384k and 438k respectively.
 
 
 
@@ -31,9 +31,8 @@ Hotkey & function to pop a window in and out of floating mode\
 Solitary and fullscreen windows on the desktop now have borders
 
 #### TODO
-Still some vestiges of unused features: scratchpad\
-Clean up the code\
-Update border color on the fly for theming
+Update border color on the fly for theming\
+Additional tiled layouts?
 
 
 Installation
