@@ -52,7 +52,7 @@ enum { _NET_WM_STATE_REMOVE, _NET_WM_STATE_ADD, _NET_WM_STATE_TOGGLE };
 #define MONITORS 1
 
 enum { RESIZE, MOVE };
-enum { TILE, MONOCLE, BSTACK, EQUAL, MODES };
+enum { TILE, EQUAL, MODES };
 
 /* argument structure to be passed to function by config.h
  * com  - a command to run
@@ -238,7 +238,6 @@ static void killclient();
 static void mapnotify(xcb_generic_event_t *e);
 static void maprequest(xcb_generic_event_t *e);
 static void maximize();
-static void monocle(int h, int y);
 static void move_down();
 static void move_up();
 static void mousemotion(const Arg *arg);
@@ -330,8 +329,6 @@ static void (*events[XCB_NO_OPERATION])(xcb_generic_event_t *e);
  * y (or cy) - offset from top to place the windows (reserved by the panel) */
 static void (*layout[MODES])(int h, int y) = {
     [TILE] = stack,
-    [BSTACK] = stack,
-    [MONOCLE] = monocle,
     [EQUAL] = equal,
 };
 
@@ -1856,17 +1853,6 @@ void mousemotion(const Arg *arg)
     free(pointer);
 }
 
-/* each window should cover all the available screen space */
-void monocle(int hh, int cy)
-{
-    unsigned int b = 0;
-
-    for (client *c = M_HEAD; c; c = M_GETNEXT(c))
-        if (!ISFMFTM(c))
-            xcb_move_resize(dis, c->win, M_GAPS, cy + M_GAPS,
-                            M_WW - 2 * M_GAPS - b, hh - 2 * M_GAPS - b, &c->position_info);
-}
-
 /* move the current client, to current->next
 * and current->next to current client's position */
 void move_down()
@@ -2470,16 +2456,6 @@ static void setup_display(void)
             disp->di.mode = DEFAULT_MODE;
             disp->di.showpanel = SHOW_PANEL;
             disp->di.invert = INVERT;
-
-/* Pivot monitor support */
-            if (moni->wh > moni->ww) {
-                if (disp->di.mode == TILE)
-                    disp->di.mode = BSTACK;
-                else {
-                    if (disp->di.mode == BSTACK)
-                        disp->di.mode = TILE;
-                }
-            }
         }
     }
     current_desktop = (desktop *)get_head(&desktops);
@@ -2522,9 +2498,9 @@ void spawn(const Arg *arg)
 /* arrange windows in normal or bottom stack tile */
 void stack(int hh, int cy)
 {
-    client *c = NULL, *t = NULL; bool b = M_MODE == BSTACK;
+    client *c = NULL, *t = NULL; bool b = M_MODE;
     int n = 0, d = 0, z = b ? M_WW : hh,
-        ma = (M_MODE == BSTACK ? M_WH : M_WW) * MASTER_SIZE + M_MASTER_SIZE;
+        ma = M_WW * MASTER_SIZE + M_MASTER_SIZE;
 
     /* count stack windows and grab first non-floating, non-maximize window */
     for (t = M_HEAD; t; t = M_GETNEXT(t)) {
@@ -2673,11 +2649,11 @@ void tile(void)
     if (!M_HEAD)
         return; /* nothing to arange */
 #ifndef EWMH_TASKBAR
-    layout[M_GETNEXT(M_HEAD) ? M_MODE : MONOCLE](M_WH + (M_SHOWPANEL ? 0 : PANEL_HEIGHT),
+    layout[M_MODE](M_WH + (M_SHOWPANEL ? 0 : PANEL_HEIGHT),
                                 (TOP_PANEL && M_SHOWPANEL ? PANEL_HEIGHT : 0));
 #else
     Update_Global_Strut();
-    layout[M_GETNEXT(M_HEAD) ? M_MODE : MONOCLE](M_WH, M_WY);
+    layout[M_MODE](M_WH, M_WY);
 #endif /* EWMH_TASKBAR */
 }
 
@@ -2732,11 +2708,7 @@ void unmapnotify(xcb_generic_event_t *e)
  *  - maximized windows
  *  - tiled windows
  *
- * a window should have borders in any case, except if
- *  - the window is the only window on screen
- *  - the window is maximized
- *  - the mode is MONOCLE and the window is not floating or transient
- *    and MONOCLE_BORDERS is set to false
+ * a window should have borders ALWAYS
  */
 static inline void nada(void)
 {
@@ -2777,6 +2749,7 @@ void update_current(client *newfocus)   // newfocus may be NULL
         return;
     }
 
+	/* Setting window borders: xcb_border_width -----> client_borders(c) */
     for (client *c = M_HEAD; c; c = M_GETNEXT(c)) {
         if (!c->isfullscreen) {
             xcb_change_window_attributes(dis, c->win, XCB_CW_BORDER_PIXEL,
