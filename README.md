@@ -11,6 +11,7 @@ mmWM is lightweight. `smem` outputs USS and PSS at 388k and 473k respectively.
 
 #### Modern and Minimalist Approach
 Heavy gaps between windows\
+Slim, global borders for _all_ windows\
 Simplified, fewer, and more logical keyboard shortcuts\
 2 tiling modes: Tile (master/slave) and Equal (and floating on a per window basis)\
 Tiled windows are interacted with by the keyboard\
@@ -23,7 +24,8 @@ Automated focusing on previous _populated_ desktop if last window on desktop is 
 User can define the maximum number of allowed windows per desktop\
 Disabled inverting stack in equal mode (no horizontally maximized windows because they're ugly)\
 Hotkey & function to swap between the 2 main tiling modes\
-Hotkey & function to pop a window in and out of floating mode
+Hotkey & function to pop a window in and out of floating mode\
+Solitary windows on the desktop now have borders
 
 #### TODO
 Still some vestiges of unused features: scratchpad, monocle mode & bstack mode\
