@@ -19,10 +19,8 @@
 #define CLICK_TO_FOCUS  True      /* Focus an unfocused window when clicked */
 #define WIN_LIMIT		3		  /* Maximum number of windows allowed per desktop */
 #define BORDER_WIDTH    8         /* window border width */
-#define SCRATCH_WIDTH   0         /* scratch window border width, 0 to disable */
 #define FOCUS           "#eeeeee" /* focused window border color   */
 #define UNFOCUS         "#CAB59E" /* unfocused window border color */
-#define SCRATCH         "#cc0000" /* scratchpad border color */
 #define DESKTOPS        10        /* number of desktops - edit DESKTOPCHANGE keys to suit */
 #define DEFAULT_DESKTOP 0         /* the desktop to focus on exec */
 #define MINWSZ          50        /* minimum window size in pixels */
@@ -31,9 +29,6 @@
 #define INVERT          False     /* use alternative modes by default */
 #define AUTOCENTER      True      /* automatically center windows floating by default */
 #define OUTPUT_TITLE    False     /* output the title of the currently active window */
-#define USE_SCRATCHPAD  False     /* enable the scratchpad functionality */
-#define CLOSE_SCRATCHPAD True     /* close scratchpad on quit */
-#define SCRPDNAME       "scratchpad" /* the name of the scratchpad window */
 
 /* Shell command helper - DO NOT EDIT */
 #define SHCMD(cmd) {.com = (const char*[]){"/bin/sh", "-c", cmd, NULL}}
@@ -41,7 +36,6 @@
 /* Shell commands */
 static const char *termcmd[] = { "xterm",     NULL };
 static const char *menucmd[] = { "rofi","-show","run", NULL };
-static const char *scrpcmd[] = { "xterm", "-T", "scratchpad", NULL };
 
 #define DESKTOPCHANGE(K,N) \
     {  MOD4,             K,              change_desktop, {.i = N}}, \

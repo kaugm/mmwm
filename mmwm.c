@@ -292,15 +292,13 @@ static strut_t gstrut;
 #endif /* EWMH_TASKBAR */
 
 /* variables */
-static bool running = true, show = true, showscratchpad = false;
+static bool running = true, show = true;
 static int default_screen, previous_desktop, current_desktop_number, retval;
 static int borders;
-static unsigned int numlockmask, win_unfocus, win_focus, win_scratch;
+static unsigned int numlockmask, win_unfocus, win_focus;
 static xcb_connection_t *dis;
 static xcb_screen_t *screen;
 static uint32_t checkwin;
-static xcb_atom_t scrpd_atom;
-static client *scrpd = NULL;
 static list desktops;
 static list aliens;
 
@@ -495,19 +493,6 @@ release_grab:
     if (reply)
         free(reply);
     xcb_ungrab_server(con);
-}
-
-static bool xcb_check_attribute(xcb_connection_t *con, xcb_window_t win, xcb_atom_t atom)
-{
-    xcb_get_property_reply_t *prop_reply;
-    if ((prop_reply = xcb_get_property_reply(con, xcb_get_property(dis, 0, win, atom,
-                                        XCB_GET_PROPERTY_TYPE_ANY, 0, 0), NULL))) {
-        xcb_atom_t reply_type = prop_reply->type;
-        free(prop_reply);
-        if (reply_type != XCB_NONE)
-            return True;
-    }
-    return False;
 }
 
 /* get screen of display */
@@ -762,25 +747,18 @@ void buttonpress(xcb_generic_event_t *e)
     DEBUGP("xcb: button press: %d state: %d\n", ev->detail, ev->state);
 
     client *c = wintoclient(ev->event);
-    if (!c) {
-        if(USE_SCRATCHPAD && showscratchpad && scrpd && ev->event == scrpd->win)
-            c = scrpd;
-        else
-            return;
-    }
 
-    if (CLICK_TO_FOCUS && M_CURRENT != c && ev->detail == XCB_BUTTON_INDEX_1)
-        update_current(c);
+	if (CLICK_TO_FOCUS && M_CURRENT != c && ev->detail == XCB_BUTTON_INDEX_1) {
+		update_current(c);
+	}
 
-    if (c != scrpd) {
-        for (unsigned int i = 0; i < LENGTH(buttons); i++)
-            if (buttons[i].func && buttons[i].button == ev->detail &&
-                CLEANMASK(buttons[i].mask) == CLEANMASK(ev->state)) {
-                if (M_CURRENT != c)
-                    update_current(c);
-                buttons[i].func(&(buttons[i].arg));
-            }
-    }
+	for (unsigned int i = 0; i < LENGTH(buttons); i++)
+		if (buttons[i].func && buttons[i].button == ev->detail &&
+			CLEANMASK(buttons[i].mask) == CLEANMASK(ev->state)) {
+			if (M_CURRENT != c)
+				update_current(c);
+			buttons[i].func(&(buttons[i].arg));
+		}
 
     if (CLICK_TO_FOCUS) {
         xcb_allow_events(dis, XCB_ALLOW_REPLAY_POINTER, ev->time);
@@ -802,7 +780,7 @@ void change_desktop(const Arg *arg)
     previous_desktop = current_desktop_number;
     select_desktop(arg->i);
     if (show) {
-        if (M_CURRENT && M_CURRENT != scrpd)
+        if (M_CURRENT)
             xcb_move(dis, M_CURRENT->win, M_CURRENT->position_info.previous_x, M_CURRENT->position_info.previous_y, &M_CURRENT->position_info);
         for (client *c = M_HEAD; c; c = M_GETNEXT(c)) {
             if (c != M_CURRENT)
@@ -814,7 +792,7 @@ void change_desktop(const Arg *arg)
         if (c != M_CURRENT)
             xcb_move(dis, c->win, -2 * M_WW, 0, &c->position_info);
     }
-    if (M_CURRENT && M_CURRENT != scrpd)
+    if (M_CURRENT)
         xcb_move(dis, M_CURRENT->win, -2 * M_WW, 0, &M_CURRENT->position_info);
     select_desktop(arg->i);
     update_current(M_CURRENT);
@@ -948,20 +926,6 @@ void cleanup(void)
     Cleanup_EWMH_Taskbar_Support();
 #endif /* EWMH_TASKBAR */
 
-    if(USE_SCRATCHPAD && scrpd) {
-        if(CLOSE_SCRATCHPAD) {
-            deletewindow(scrpd->win);
-        }
-        else {
-            xcb_border_width(dis, scrpd->win, 0);
-            xcb_get_geometry_reply_t *wa = get_geometry(scrpd->win);
-            xcb_move(dis, scrpd->win, (M_WW - wa->width) / 2, (M_WH - wa->height) / 2, &scrpd->position_info);
-            free(wa);
-        }
-        free(scrpd);
-        scrpd = NULL;
-    }
-
     xcb_ewmh_connection_wipe(ewmh);
     free(ewmh);
 
@@ -1081,10 +1045,6 @@ void clientmessage(xcb_generic_event_t *e)
                             ;
                         if (t)
                             update_current(c);
-                    }
-                    else {
-                        if (showscratchpad && scrpd && scrpd->win == ev->window)
-                            update_current(scrpd);
                     }
                 }
                 else {
@@ -1320,11 +1280,6 @@ void destroynotify(xcb_generic_event_t *e)
             destroy_display(c);
         removeclient(c);
     }
-    else if (USE_SCRATCHPAD && scrpd && ev->window == scrpd->win) {
-        free(scrpd);
-        scrpd = NULL;
-        update_current(M_CURRENT);
-    }
    else {
         alien *a;
 
@@ -1353,19 +1308,14 @@ void enternotify(xcb_generic_event_t *e)
 
     DEBUG("event is valid");
 
-    if(USE_SCRATCHPAD && showscratchpad && scrpd && ev->event == scrpd->win) {
-        update_current(scrpd);
-    }
-    else {
-        client *c = wintoclient(ev->event);
+	client *c = wintoclient(ev->event);
 
-        if (c
-         && ev->mode == XCB_NOTIFY_MODE_NORMAL
-         && c != M_CURRENT
-         && ev->detail != XCB_NOTIFY_DETAIL_INFERIOR) {
-            update_current(c);
-        }
-    }
+	if (c
+	&& ev->mode == XCB_NOTIFY_MODE_NORMAL
+	&& c != M_CURRENT
+	&& ev->detail != XCB_NOTIFY_DETAIL_INFERIOR) {
+		update_current(c);
+	}
 }
 
 void equal(int h, int y)
@@ -1571,7 +1521,7 @@ void mapnotify(xcb_generic_event_t *e)
 
     DEBUG("xcb: map notify");
 
-    if (wintoclient(ev->window) || (scrpd && scrpd->win == ev->window))
+    if (wintoclient(ev->window))
         return;
 
     xcb_window_t wins[] = {ev->window};
@@ -1653,21 +1603,6 @@ void maprequest(xcb_generic_event_t *e)
 
     if (xcb_ewmh_get_wm_name_reply(ewmh, cookie, &wtitle, (void *)0)) {
         DEBUGP("EWMH window title: %s\n", wtitle.strings);
-
-        if (!strcmp(wtitle.strings, SCRPDNAME)) {
-            scrpd = create_client(ev->window, wtype);
-            setwindefattr(scrpd->win);
-            grabbuttons(scrpd);
-
-            xcb_move(dis, scrpd->win, -2 * M_WW, 0, &scrpd->position_info);
-            xcb_map_window(dis, scrpd->win);
-            xcb_ewmh_get_utf8_strings_reply_wipe(&wtitle);
-
-            if (scrpd_atom)
-                xcb_change_property(dis, XCB_PROP_MODE_REPLACE, scrpd->win, scrpd_atom,
-                                    XCB_ATOM_WINDOW, 32, 1, &scrpd->win);
-            return;
-        }
 		
         xcb_ewmh_get_utf8_strings_reply_wipe(&wtitle);
     }
@@ -2204,7 +2139,6 @@ int setup(int default_screen)
 
     win_focus   = getcolor(FOCUS);
     win_unfocus = getcolor(UNFOCUS);
-    win_scratch = getcolor(SCRATCH);
 
     /* setup keyboard */
     if (setup_keyboard() == -1)
@@ -2269,11 +2203,6 @@ int setup(int default_screen)
                         ewmh->_NET_SUPPORTED, XCB_ATOM_ATOM, 32,
                         LENGTH(net_atoms), net_atoms);
 
-    if (USE_SCRATCHPAD && !CLOSE_SCRATCHPAD)
-        scrpd_atom = xcb_internatom(dis, SCRPDNAME, 0);
-    else
-        scrpd_atom = 0;
-
     grabkeys();
 
     /* set events */
@@ -2316,17 +2245,6 @@ int setup(int default_screen)
             if (!attr->override_redirect
                 && attr->_class != XCB_WINDOW_CLASS_INPUT_ONLY) {
                 uint32_t dsk = cd;
-
-                if (scrpd_atom && !scrpd) {
-                    if (xcb_check_attribute(dis, children[i], scrpd_atom)) {
-                        scrpd = create_client(children[i], wtype);
-                        setwindefattr(scrpd->win);
-                        grabbuttons(scrpd);
-                        xcb_move(dis, scrpd->win, -2 * M_WW, 0, &scrpd->position_info);
-                        showscratchpad = False;
-                        continue;
-                    }
-                }
 
                 xcb_get_property_reply_t *prop_reply;
                 prop_reply = xcb_get_property_reply(dis, xcb_get_property_unchecked(
@@ -2406,10 +2324,6 @@ int setup(int default_screen)
     change_desktop(&(Arg){.i = DEFAULT_DESKTOP});
     switch_mode(&(Arg){.i = DEFAULT_MODE});
 
-    /* open the scratchpad terminal if enabled */
-    if (USE_SCRATCHPAD && !scrpd)
-        spawn(&(Arg){.com = scrpcmd});
-
 #ifdef EWMH_TASKBAR
     Setup_EWMH_Taskbar_Support();
     Setup_Global_Strut();
@@ -2483,7 +2397,7 @@ void sigchld()
     while (0 < waitpid(-1, NULL, WNOHANG));
 }
 
-/* execute a command, save the child pid if we start the scratchpad */
+/* execute a command */
 void spawn(const Arg *arg)
 {
     if (fork())
@@ -2718,7 +2632,7 @@ static inline void nada(void)
 }
 void update_current(client *newfocus)   // newfocus may be NULL
 {
-    if(!M_HEAD && USE_SCRATCHPAD && !showscratchpad) {                // empty desktop. no clients, no scratchpad.
+    if(!M_HEAD) {                // empty desktop. no clients
         nada();
         return;
     }
@@ -2741,9 +2655,6 @@ void update_current(client *newfocus)   // newfocus may be NULL
         }
     }
 
-    if(!M_CURRENT && (USE_SCRATCHPAD && showscratchpad && scrpd))     // focus scratchpad, if visible
-        M_CURRENT = scrpd;
-
     if(!M_CURRENT) {  // there is really really really nothing to focus.
         nada();
         return;
@@ -2756,13 +2667,6 @@ void update_current(client *newfocus)   // newfocus may be NULL
                                     (c == M_CURRENT ? &win_focus : &win_unfocus));
             xcb_border_width(dis, c->win, client_borders(c));
         }
-    }
-
-    if (USE_SCRATCHPAD && SCRATCH_WIDTH && showscratchpad && scrpd) {
-        xcb_change_window_attributes(dis, scrpd->win, XCB_CW_BORDER_PIXEL,
-                            (M_CURRENT == scrpd ? &win_scratch : &win_unfocus));
-        xcb_border_width(dis, scrpd->win, SCRATCH_WIDTH);
-
     }
 
     tile();
@@ -2789,9 +2693,6 @@ void update_current(client *newfocus)   // newfocus may be NULL
     }
     if(rl)
         xcb_raise_window(dis, rl->win);
-
-    if (USE_SCRATCHPAD && showscratchpad && scrpd)
-        xcb_raise_window(dis, scrpd->win);
 
     if (check_head(&aliens)) {
         alien *a;
@@ -2948,16 +2849,12 @@ static inline void Update_EWMH_Taskbar_Properties(void)
     client *c;
     int num=0;
 
-    if(showscratchpad && scrpd)
-        num++;
     for (c = M_HEAD; c; c = M_GETNEXT(c))
         num++;
 
     if((wins = (xcb_window_t *)calloc(num, sizeof(xcb_window_t))))
     {
         num = 0;
-        if(showscratchpad && scrpd)
-            wins[num++] = scrpd->win;
         for (c = M_HEAD; c; c = M_GETNEXT(c))
             wins[num++] = c->win;
         xcb_change_property(dis, XCB_PROP_MODE_REPLACE,
