@@ -7,7 +7,7 @@ mmWM is designed to provide an aesthetic and minimalistic desktop as it prevents
 
 ![mmwm thumbnail](mmwm.jpg)
 
-mmWM is lightweight. `smem` outputs USS and PSS at 388k and 473k respectively.
+mmWM is lightweight. `smem` outputs USS and PSS at 384k and 439k respectively.
 
 
 
@@ -31,7 +31,7 @@ Hotkey & function to pop a window in and out of floating mode\
 Solitary and fullscreen windows on the desktop now have borders
 
 #### TODO
-Still some vestiges of unused features: scratchpad, monocle mode & bstack mode\
+Still some vestiges of unused features: scratchpad\
 Clean up the code\
 Update border color on the fly for theming
 
@@ -55,7 +55,7 @@ Configuration
 -------------
 
 You can configure mmWM by editing `config.h` before compiling.\
-You can add / remove functions by editing `mmwm.c` and searching for `void [function]` and making changes there.
+You can add / remove / modify functions by editing `mmwm.c` and searching for `void [function]` and making changes there.
 
 Usage
 -----
