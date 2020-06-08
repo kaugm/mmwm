@@ -18,7 +18,7 @@
 #define FOLLOW_WINDOW   True     /* Follow the window when moved to a different desktop */
 #define CLICK_TO_FOCUS  True      /* Focus an unfocused window when clicked */
 #define WIN_LIMIT		3		  /* Maximum number of windows allowed per desktop */
-#define BORDER_WIDTH    8         /* window border width */
+#define BORDER_WIDTH    10         /* window border width */
 #define FOCUS           "#eeeeee" /* focused window border color   */
 #define UNFOCUS         "#CAB59E" /* unfocused window border color */
 #define DESKTOPS        10        /* number of desktops - edit DESKTOPCHANGE keys to suit */
@@ -57,6 +57,8 @@ static key keys[] = {
     {  MOD4,             XK_j,          popout,            {NULL}},
     /* toggles inverted stacking of slave windows for TILE layout */
     {  MOD4,             XK_i,          invertstack,       {NULL}},
+    /* resets the size of the master window */
+    {  MOD4,			 XK_r,			reset_master,	   {NULL}},
     /* change tiling mode: TILE or EQUAL */
     {  MOD4|SHIFT,       XK_t,          switch_mode,       {.i = TILE}},
     {  MOD4|SHIFT,       XK_e,          switch_mode,       {.i = EQUAL}},
@@ -85,5 +87,7 @@ static Button buttons[] = {
     /* move/resize using the mouse */
     {  MOD4,    Button1,     mousemotion,   {.i = MOVE}},
     {  MOD4,    Button3,     mousemotion,   {.i = RESIZE}},
+    {  MOD4,	Button4,	 resize_master,     {.i = +10}},
+    {  MOD4,	Button5,	 resize_master,     {.i = -10}},
 };
 #endif

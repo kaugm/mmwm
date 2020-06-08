@@ -35,6 +35,8 @@
 #define Button1      XCB_BUTTON_INDEX_1
 #define Button2      XCB_BUTTON_INDEX_2
 #define Button3      XCB_BUTTON_INDEX_3
+#define Button4      XCB_BUTTON_INDEX_4
+#define Button5      XCB_BUTTON_INDEX_5
 #define XCB_MOVE_RESIZE XCB_CONFIG_WINDOW_X | XCB_CONFIG_WINDOW_Y | XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT
 #define XCB_MOVE        XCB_CONFIG_WINDOW_X | XCB_CONFIG_WINDOW_Y
 #define XCB_RESIZE      XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT
@@ -170,6 +172,7 @@ typedef struct {
 #define M_GAPS        (current_display->di.gaps)
 #define M_SHOWPANEL   (current_display->di.showpanel)
 #define M_INVERT      (current_display->di.invert)
+#define RESET_SIZE	  MASTER_SIZE
 
 /* properties of each display
  * current      - the currently highlighted window
@@ -246,6 +249,8 @@ static void prev_win();
 static void propertynotify(xcb_generic_event_t *e);
 static void quit(const Arg *arg);
 static void removeclient(client *c);
+static void resize_master(const Arg *arg);
+static void reset_master();
 static void swap_modes();
 static void run(void);
 static void select_desktop(int i);
@@ -901,7 +906,7 @@ static void centerfloating(client *c)
     free(wa);
 }
 
-void popout(void)
+void popout()
 {
 	if (!M_CURRENT)
 		return;
@@ -1926,6 +1931,25 @@ void removeclient(client *c)
         tile();
     else
         select_desktop(cd);
+}
+
+/* resize the master window - check for boundary size limits
+ * the size of a window can't be less than MINWSZ
+ */
+void resize_master(const Arg *arg)
+{
+    int msz = M_WW * MASTER_SIZE + M_MASTER_SIZE + arg->i;
+
+    if (msz < MINWSZ || M_WW - msz < MINWSZ)
+        return;
+    M_MASTER_SIZE += arg->i;
+    tile();
+}
+
+void reset_master()
+{
+	M_MASTER_SIZE = RESET_SIZE;
+	tile();
 }
 
 /*
