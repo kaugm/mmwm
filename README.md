@@ -18,7 +18,7 @@ No per-app rules. All windows start tiled and focused on current desktop (unless
 Simplified, fewer, and more logical keyboard shortcuts\
 2 tiling modes: Tile (master/slave) and Equal (and floating on a per window basis)\
 Tiled windows are interacted with by the keyboard\
-Floating windows are interacted with by the mouse (except using the keyboard to pop them out)
+Floating windows are interacted with by the mouse (except using the keyboard to pop them out and changing master window size)
 
 
 #### Added features
@@ -28,12 +28,11 @@ User can define the maximum number of allowed windows per desktop\
 Disabled inverting stack in equal mode (no horizontally maximized windows because they're ugly)\
 Hotkey & function to swap between the 2 main tiling modes\
 Hotkey & function to pop a window in and out of floating mode\
-Solitary and fullscreen windows on the desktop now have borders
+Solitary and fullscreen windows on the desktop now have borders\
+Hotkey to reset master window size
 
 #### TODO
-Update border color on the fly for theming\
-Additional tiled layouts?
-
+Update border color on the fly for theming
 
 Installation
 ------------
@@ -65,7 +64,7 @@ Without panel: Add the following to your `.xinitrc`
 
 With Panel (options below):\
 See `examples` folder for customized panel scripts (better suited for laptops)\
-Download a panel script from [FrankenWM's Github page](https://gist.github.com/sulami/d6a53179d6d7479e0709), make it executable, and save it somewhere (basic panel, contains funciton for getting desktop number and tiling mode only)
+Download a panel script from [FrankenWM's Github page](https://gist.github.com/sulami/d6a53179d6d7479e0709), make it executable, and save it somewhere (basic panel, contains function for getting desktop number and tiling mode only)
 
 
 Add the following to your `.xinitrc`
