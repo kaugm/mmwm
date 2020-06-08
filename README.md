@@ -63,9 +63,9 @@ Without panel: Add the following to your `.xinitrc`
 
     $ exec mmwm &
 
-Panel Options:\
+With Panel (options below):\
 See `examples` folder for customized panel scripts (better suited for laptops)\
-Download a panel script from [FrankenWM's Github page](https://gist.github.com/sulami/d6a53179d6d7479e0709), make it executable, and save it somewhere
+Download a panel script from [FrankenWM's Github page](https://gist.github.com/sulami/d6a53179d6d7479e0709), make it executable, and save it somewhere (basic panel, contains funciton for getting desktop number and tiling mode only)
 
 
 Add the following to your `.xinitrc`
