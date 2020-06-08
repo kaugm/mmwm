@@ -53,7 +53,7 @@ prints version information to standard output, then exits.
 .SS Status bar
 mmwm does not provide a status bar. Consistent with the Unix philosophy,
 mmwm provides information to the status bar or panel of choice via text. 
-Please see FrankenWM's github page for premade bar scripts.
+Please see FrankenWM's github page for premade bar scripts or the examples folder on mmWM's github page.
 .SS Keyboard and mouse commands
 All of
 .I mmwm's
@@ -75,6 +75,9 @@ Sets equal layout
 .B Mod4\-m
 Switch back and forth from tiled to equal layouts
 .TP
+.B Mod4\-r
+Reset the master window size to the configured default
+.TP
 
 
 .SS WINDOW SELECTION
@@ -93,7 +96,7 @@ Swaps the focused window to/from master area
 Maximize/fullscreen the current window
 .TP
 .B Mod4\-i
-Toggle the inverting status for the tiled layout. Moves the slave window section between the left and right sides
+Toggle the inverting status for the tiled layout. Moves the slave window section between the left and right sides. This is disabled for the EQUAL tiling mode
 
 .SS COMMANDS
 
@@ -137,6 +140,12 @@ Dragging the mouse will move the selected window
 .TP
 .B Mod4\-Button3
 Dragging the mouse will resize the selected window
+.TP
+.B Mod4\-Button4
+Scrolling up will increase the size of the master window
+.TP
+.B Mod4\-Button5
+Scrolling down will decrease the size of the master window
 
 .SH CUSTOMIZATION
 .I mmwm
