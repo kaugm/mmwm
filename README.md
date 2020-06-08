@@ -63,7 +63,12 @@ Without panel: Add the following to your `.xinitrc`
 
     $ exec mmwm &
 
-With panel: Download a panel script from [FrankenWM's Github page](https://gist.github.com/sulami/d6a53179d6d7479e0709), make it executable, and save it somewhere\
+Panel Options:
+<ul>
+    <li>See `examples` folder for customized panel scripts (better suited for laptops)</li>
+<li>Download a panel script from [FrankenWM's Github page](https://gist.github.com/sulami/d6a53179d6d7479e0709), make it executable, and save it somewhere</li>
+</ul>
+
 Add the following to your `.xinitrc`
 
     $ exec [PATH TO BAR SCRIPT]
