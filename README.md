@@ -63,11 +63,10 @@ Without panel: Add the following to your `.xinitrc`
 
     $ exec mmwm &
 
-Panel Options:
-<ul>
-    <li>See `examples` folder for customized panel scripts (better suited for laptops)</li>
-<li>Download a panel script from [FrankenWM's Github page](https://gist.github.com/sulami/d6a53179d6d7479e0709), make it executable, and save it somewhere</li>
-</ul>
+Panel Options:\
+See `examples` folder for customized panel scripts (better suited for laptops)\
+Download a panel script from [FrankenWM's Github page](https://gist.github.com/sulami/d6a53179d6d7479e0709), make it executable, and save it somewhere
+
 
 Add the following to your `.xinitrc`
 
@@ -77,6 +76,7 @@ Add the following to your `.xinitrc`
 Thanks
 ------
 
-[FrankenWM by sulami](https://github.com/sulami/FrankenWM)
+[FrankenWM by sulami](https://github.com/sulami/FrankenWM)\
+[Customized Panel Scripts by shmalebx9](https://github.com/shmalebx9)
 
 
