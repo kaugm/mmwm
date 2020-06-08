@@ -1,0 +1,267 @@
+#!/usr/bin/bash
+
+wm="mmwm"
+ff="/tmp/mmwm.fifo"
+PANEL_FIFO="/tmp/panel-fifo"
+[[ -p $ff ]] || mkfifo -m 600 "$ff" "$PANEL_FIFO"
+
+
+# desktop names
+# byzantine ds=("α" "β" "γ" "δ" "ε" "Ϛ" "ζ")
+# Georgian ds=("ა" "ბ" "გ" "დ" "ე" "ვ" "ზ")
+ds=("1" "2" "3" "4" "5" "6" "7")
+
+#colours
+focus="#00ffff"
+focus_bg="#e03b3b"
+
+unfocus="#b5a6b1"
+unfocus_bg="#484848"
+
+urgent="#ff3333"
+
+occupied="#00ffff"
+occupied_bg="#484848"
+
+FG_PANEL="#f4f4f5" 						# Panel's text colour
+BG_PANEL="#484848"						# Panel's background colour
+
+TRAY="%{B#e03b3b}"
+
+FONT="Terminus:size=12"
+
+# [ICONS]
+
+# Icon font
+ICONS="Flaticon:size=14"
+
+# Volume, lowest [1] to highest [4]
+VOL1=""
+VOL2=""
+VOL3=""
+VOLMUTE=""
+
+# Battery
+BAT4=" "
+BAT3=" "
+BAT2=" "
+BAT1=" "
+BATCHARGE=" "
+
+# Wifi lowest to highest
+WIFI1=""
+WIFI2=""
+WIFI3=""
+WIFI4=""
+WIFIOFF=""
+
+# Intervals, how often to fetch info for bar
+WIFI_INT="10"
+BAT_INT="50"
+
+
+### Geometry
+readonly PANEL_WIDTH=1920
+readonly PANEL_HEIGHT=30
+readonly PANEL_X=0		#panel offset to the right
+readonly PANEL_Y=0			#panel offset down
+GEOMETRY="$PANEL_WIDTH"x"$PANEL_HEIGHT"+"$PANEL_X"+"$PANEL_Y"
+
+Workspaces() {
+while read -t 60 -r wmout || true; do
+    if [[ $wmout =~ ^(([[:digit:]]+:)+[[:digit:]]+ ?)+$ ]]; then
+        read -ra desktops <<< "$wmout" && unset r
+        for desktop in "${desktops[@]}"; do
+            IFS=':' read -r d w m c u <<< "$desktop"
+            fg="%{F$unfocus B$unfocus_bg}"
+            ((w)) && fg="%{F$occupied B$occupied_bg}"
+            ((c)) && fg="%{F$focus B$focus_bg}" 
+      #      || fg="%{F$unfocus B$unfocus_bg}"
+            ((u)) && w+="%{F$urgent}"
+             #r+="[${w/tt/-}] $fg${ds[$d]} "
+             r+="$fg ${ds[$d]} "
+        done
+        #r="${r%::*}"
+    fi
+    echo "W $r"
+done < "$ff"
+}
+
+Workspaces > "$PANEL_FIFO" &
+
+# Clock and date
+#clock -sf 'S | %a %b %e | %I:%M | ' > "$PANEL_FIFO" &
+Date(){
+while true; do
+	echo $(date "+S %a %b %d | %l:%M ")
+	sleep 30
+done
+}
+
+Date > "$PANEL_FIFO" &
+
+# Sound
+# This function is not looped. This functions evaluates the correct alsa volume on first
+# run. This function is mirrored in a separate script. The separate script echoes the
+# same information to the panel fifo when volume is changed via volume keys in.
+
+Sound(){
+	NOTMUTED=$( amixer sget Master | grep "\[on\]" )
+	VOL=$( amixer sget Master | awk -F ' ' 'NR == 5 {gsub("%""]",""); print substr($4, 2, 2)}' )
+	if [[ ! -z $NOTMUTED ]] ; then
+		if [ "$VOL" -gt 74 ] ; then
+			echo "V$VOL3"
+		elif [ "$VOL" -gt 49 ] ; then
+			echo "V$VOL2"
+		else
+			echo "V$VOL1"
+		fi
+	else
+		echo "V $VOLMUTE"
+	fi
+}
+Sound > "$PANEL_FIFO" &
+
+Wifi(){
+while true ; do
+	WIFISTR=$( iwconfig wlp3s0 | awk -F' ' 'NR == 6 {gsub("Quality=",""); print "scale=3; " $2 "*100"}' | bc | cut -c 1-2 )
+	ESSID=$(iwconfig wlp3s0 | awk -F' ' 'NR == 1 {gsub("ESSID:\"","");gsub("\"",""); print $4}')
+	if [ "$ESSID" = "ESSID:off/any" ]
+		then
+			echo "A$WIFIOFF"
+			if [ "$WNOT" = "FALSE" ] ; then
+				notify-send "Warning: Wifi Disconnected" && WNOT="TRUE"
+			fi
+	elif [ "$WIFISTR" -gt 74 ]; then
+			echo "A$WIFI4 " && WNOT="FALSE"
+	elif [ "$WIFISTR" -gt 49 ]; then
+			echo "A$WIFI3 " && WNOT="FALSE"
+	elif [ "$WIFISTR" -gt 24 ]; then
+			echo "A$WIFI2 " && WNOT="FALSE"
+	else
+			echo "A$WIFI1 " && WNOT="FALSE"
+	
+	fi
+	sleep "$WIFI_INT"
+done
+}
+Wifi > "$PANEL_FIFO" &
+
+Battery() {
+while true ; do
+	CHARGING=$(cat /sys/class/power_supply/BAT1/status)
+	BATPERC=$(cat /sys/class/power_supply/BAT1/capacity)
+	if [ $CHARGING != "Discharging" ]; then
+		echo "$BATCHARGE"
+	elif [ $BATPERC -gt 74 ]; then
+		echo "D$BAT4"  
+	elif [ $BATPERC -gt 49 ]; then
+		echo "D$BAT3"
+	elif [ $BATPERC -gt 24 ]; then
+		echo "D$BAT2"
+	elif [ $BATPERC -gt 10 ]; then
+		echo "D$BAT1"
+	else
+		echo "$BAT1"
+		notify-send "low battery"
+	fi
+sleep "$BAT_INT"
+done
+}
+Battery > "$PANEL_FIFO" &
+
+
+
+# Parse
+bar() {
+while read -r line ; do
+	case $line in
+		S*)
+			# clock output
+			sys="${line#?} %{B-}%{F-}"
+			;;
+		D*)
+			# Battery
+			bat="${line#?}"
+			;;				
+		V*)
+			# Volume
+			vol="${line#?}"
+			;;					
+		A*)
+			# Wifi
+			wifi="${line#?} %{B-}%{F-}"
+			;;	
+		W*)
+			# mmwm's state
+			wm="${line#?} %{B-}%{F-}"
+			;;
+	esac
+	printf "%s\n" "%{l}${wm} %{c}${sys} %{r}$TRAY${bat}  ${vol}  $TRAY${wifi} "
+done
+}
+
+bar < "$PANEL_FIFO" \
+	| lemonbar -p -a 32 -u 2 -n "$PANEL_WM_NAME" \
+		-B "$BG_PANEL" \
+		-F "$FG_PANEL" \
+		-f "$FONT" -f "$ICONS" -f "Galatia SIL:size=12"\
+		-g "$GEOMETRY" &
+
+# The following function parses the output of `acpi_listen` to update the volume/battery
+# when volume buttons are pressed or battery is plugged in (on laptop)
+
+Acpiparse() {
+while read -r line ; do
+	case $line in
+		ac_adapter*)
+			case $line in
+			*00000000) echo "bat disconnected"
+			BATPERC=$(cat /sys/class/power_supply/BAT1/capacity)
+			if [ $BATPERC -gt 74 ]; then
+				echo "D$BAT4"  
+			elif [ $BATPERC -gt 49 ]; then
+				echo "D$BAT3"
+			elif [ $BATPERC -gt 24 ]; then
+				echo "D$BAT2"
+			elif [ $BATPERC -gt 10 ]; then
+				echo "D$BAT1"
+			else
+				echo "$BAT1"
+				notify-send "low battery"
+	fi > "$PANEL_FIFO" &
+			;;
+			*00000001) echo "bat connected"
+			BATPERC=$(cat /sys/class/power_supply/BAT1/capacity)
+			echo "D$BATCHARGE"  > "$PANEL_FIFO" &
+			;;
+			esac
+			;;
+		button/mute*)
+			VOL=$( amixer sget Master | awk -F ' ' 'NR == 5 {print substr($4, 2, 3)}' )
+			if [[ $(amixer sget Master | grep "\[on\]") ]]; then
+				echo "V $ICON $VOLMUTE" 
+			elif [ "$VOL" -gt 74 ] ; then
+				echo "V$VOL3"
+			elif [ "$VOL" -gt 49 ] ; then
+				echo "V$VOL2"
+			else
+				echo "V$VOL1"
+			fi > "$PANEL_FIFO" &
+			;;
+		button/volume*)
+			VOL=$( amixer sget Master | awk -F ' ' 'NR == 5 {print substr($4, 2, 2)}' )
+			if [ "$VOL" -gt 74 ] ; then
+				echo "V$VOL3"
+			elif [ "$VOL" -gt 49 ] ; then
+				echo "V$VOL2"
+			else
+				echo "V$VOL1"
+			fi > "$PANEL_FIFO" &
+	esac
+done
+}
+
+Acpiparse < <(acpi_listen) &
+
+"$wm" > "$ff"
