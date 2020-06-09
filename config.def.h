@@ -43,6 +43,7 @@ static const char *volmute[] = { "amixer", "-q", "set", "Master", "toggle",     
 /* Shell commands */
 static const char *termcmd[] = { "xterm",     NULL };
 static const char *menucmd[] = { "rofi","-show","run", NULL };
+static const char *idecmd[] = { "code",         NULL };
 
 #define DESKTOPCHANGE(K,N) \
     {  MOD4,             K,              change_desktop, {.i = N}}, \
@@ -73,6 +74,7 @@ static key keys[] = {
     /* spawn terminal, dmenu, anything you want to */
     {  MOD4,             XK_Return,     spawn,             {.com = termcmd}},
     {  MOD4,             XK_d,          spawn,             {.com = menucmd}},
+    {  MOD4,             XK_c,          spawn,             {.com = idecmd}},
     /* quit current window */
     {  MOD4,             XK_q,          killclient,        {NULL}},
     
