@@ -33,6 +33,13 @@
 /* Shell command helper - DO NOT EDIT */
 #define SHCMD(cmd) {.com = (const char*[]){"/bin/sh", "-c", cmd, NULL}}
 
+/* Define commands to run on volume/brightness keypress events */
+static const char *brightnessup[] = { "xbacklight", "-inc", "5",     NULL };
+static const char *brightnessdown[] = { "xbacklight", "-dec", "5",     NULL };
+static const char *voldown[] = { "amixer", "-q", "set", "Master", "5-",     NULL };
+static const char *volup[] = { "amixer", "-q", "set", "Master", "5+",     NULL };
+static const char *volmute[] = { "amixer", "-q", "set", "Master", "toggle",     NULL };
+
 /* Shell commands */
 static const char *termcmd[] = { "xterm",     NULL };
 static const char *menucmd[] = { "rofi","-show","run", NULL };
@@ -68,6 +75,13 @@ static key keys[] = {
     {  MOD4,             XK_d,          spawn,             {.com = menucmd}},
     /* quit current window */
     {  MOD4,             XK_q,          killclient,        {NULL}},
+    
+     {  0, XF86XK_MonBrightnessUp,   spawn,             {.com = brightnessup}}, 
+     {  0, XF86XK_MonBrightnessDown, spawn,             {.com = brightnessdown}},      
+     {  0, XF86XK_AudioLowerVolume,  spawn,             {.com = voldown}},     
+     {  0, XF86XK_AudioRaiseVolume,  spawn,             {.com = volup}}, 
+     {  0, XF86XK_AudioMute,  		 spawn,             {.com = volmute}}, 
+          
     /* desktop selection */
        DESKTOPCHANGE(    XK_1,                             0)
        DESKTOPCHANGE(    XK_2,                             1)
