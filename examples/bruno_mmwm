@@ -239,7 +239,7 @@ while read -r line ; do
 			;;
 		button/mute*)
 			VOL=$( amixer sget Master | awk -F ' ' 'NR == 5 {print substr($4, 2, 3)}' )
-			if [[ $(amixer sget Master | grep "\[on\]") ]]; then
+			if [[ ! $(amixer sget Master | grep "\[on\]") ]]; then
 				echo "V $ICON $VOLMUTE" 
 			elif [ "$VOL" -gt 74 ] ; then
 				echo "V$VOL3"
