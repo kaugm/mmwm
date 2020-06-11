@@ -9,6 +9,7 @@
 #include <regex.h>
 #include <sys/wait.h>
 #include <X11/keysym.h>
+#include <X11/XF86keysym.h>
 #include <xcb/xcb.h>
 #include <xcb/xcb_atom.h>
 #include <xcb/xcb_aux.h>
