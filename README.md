@@ -1,4 +1,4 @@
-# mmWM
+# mmWM - Vendorkeys Branch
 #### Modern Minimalistic Window Manager (WIP, stripped down FrankenWM)
 
 mmWM is a dynamic window manager that is heavily based off of FrankenWM but 25% smaller. In fact, it is FrankenWM, but with many _unnecessary_ functions/features removed (and some unique features added). Its goal is to simplify your tiling workflow, with less, more logical hotkeys, and more automated window management.
@@ -21,15 +21,8 @@ Tiled windows are interacted with by the keyboard\
 Floating windows are interacted with by the mouse (except using the keyboard to pop them out and changing master window size)
 
 
-#### Added features
-Automated desktop switching when opening a new window in a _full_ desktop\
-Automated focusing on previous _populated_ desktop if last window on desktop is killed\
-User can define the maximum number of allowed windows per desktop\
-Disabled inverting stack in equal mode (no horizontally maximized windows because they're ugly)\
-Hotkey & function to swap between the 2 main tiling modes\
-Hotkey & function to pop a window in and out of floating mode\
-Solitary and fullscreen windows on the desktop now have borders\
-Hotkey to reset master window size
+#### Extra features from master branch
+Brightness and volume XF86Keysym support for laptop keys (Vendorkeys branch)
 
 #### TODO
 Update border color on the fly for theming
