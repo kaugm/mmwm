@@ -19,8 +19,6 @@
 #define CLICK_TO_FOCUS  True      /* Focus an unfocused window when clicked */
 #define WIN_LIMIT		3		  /* Maximum number of windows allowed per desktop */
 #define BORDER_WIDTH    10         /* window border width */
-#define FOCUS           "#eeeeee" /* focused window border color   */
-#define UNFOCUS         "#CAB59E" /* unfocused window border color */
 #define DESKTOPS        10        /* number of desktops - edit DESKTOPCHANGE keys to suit */
 #define DEFAULT_DESKTOP 0         /* the desktop to focus on exec */
 #define MINWSZ          50        /* minimum window size in pixels */
@@ -29,6 +27,7 @@
 #define INVERT          False     /* use alternative modes by default */
 #define AUTOCENTER      True      /* automatically center windows floating by default */
 #define OUTPUT_TITLE    False     /* output the title of the currently active window */
+#define COLORS_FILE		"/home/USER/.cache/wal/colors-mmwm.h"		/*path to any colors file. */
 
 /* Shell command helper - DO NOT EDIT */
 #define SHCMD(cmd) {.com = (const char*[]){"/bin/sh", "-c", cmd, NULL}}

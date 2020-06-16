@@ -174,6 +174,7 @@ typedef struct {
 #define M_INVERT      (current_display->di.invert)
 #define RESET_SIZE	  MASTER_SIZE
 
+
 /* properties of each display
  * current      - the currently highlighted window
  */
@@ -2161,6 +2162,18 @@ int setup(int default_screen)
     aliens.head = NULL;
     aliens.tail = NULL;
 
+	/* code for getting dynamic colors */
+	char FOCUS[1000] = "#dfe3e9";		/* default focused window border color */
+	char UNFOCUS[1000] = "#8e9fc0";		/* default unfocused window border color */
+ 
+	FILE *mmwmcolors;
+	char colorfile[] = COLORS_FILE;
+	mmwmcolors = fopen (colorfile, "r");
+
+	fscanf (mmwmcolors, "%s %s", FOCUS, UNFOCUS);
+	fclose (mmwmcolors);
+	/* end code addition */
+	
     win_focus   = getcolor(FOCUS);
     win_unfocus = getcolor(UNFOCUS);
 
@@ -2683,6 +2696,21 @@ void update_current(client *newfocus)   // newfocus may be NULL
         nada();
         return;
     }
+    
+	/* code for getting dynamic colors */
+	char FOCUS[1000] = "#dfe3e9";		/* default focused window border color */
+	char UNFOCUS[1000] = "#8e9fc0";		/* default unfocused window border color */
+
+	FILE *mmwmcolors;
+	char colorfile[] = COLORS_FILE;
+	mmwmcolors = fopen (colorfile, "r");
+
+	fscanf (mmwmcolors, "%s %s", FOCUS, UNFOCUS);
+	fclose (mmwmcolors);
+
+	win_focus   = getcolor(FOCUS);
+	win_unfocus = getcolor(UNFOCUS);
+	/* end code addition */
 
 	/* Setting window borders: xcb_border_width -----> client_borders(c) */
     for (client *c = M_HEAD; c; c = M_GETNEXT(c)) {
