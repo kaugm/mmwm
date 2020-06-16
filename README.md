@@ -64,7 +64,7 @@ You can add / remove / modify functions by editing `mmwm.c` and searching for `v
 2. Copy `colors-mmwm.h` to `$HOME/.config/wal/templates/`
 3. Run `wal` and check if `colors-mmwm.h` was generated in `$HOME/.cache/wal/`
 4. You can change the specific colors you want for the focused / unfocused borders by modifying `.../templates/colors-mmwm.h`
-
+5. Window borders will be updated on the next _action_ after `wal` is run, _ex. opening a new window_
 
 Usage
 -----
