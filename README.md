@@ -1,5 +1,5 @@
 # mmWM
-#### Modern Minimalistic Window Manager (WIP, stripped down FrankenWM)
+#### Modern Minimalistic Window Manager
 
 mmWM is a dynamic window manager that is heavily based off of FrankenWM but 25% smaller. In fact, it is FrankenWM, but with many _unnecessary_ features stripped out, and others added . Its goal is to simplify your tiling workflow, with less, more logical hotkeys, and more automated window management.
 
