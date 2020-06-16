@@ -2165,9 +2165,6 @@ int setup(int default_screen)
     aliens.tail = NULL;
 
 	/* code for getting dynamic colors */
-	char FOCUS[1000] = "#dfe3e9";		/* default focused window border color */
-	char UNFOCUS[1000] = "#8e9fc0";		/* default unfocused window border color */
- 
 	FILE *mmwmcolors;
 	char colorfile[] = COLORS_FILE;
 	mmwmcolors = fopen (colorfile, "r");
@@ -2700,9 +2697,6 @@ void update_current(client *newfocus)   // newfocus may be NULL
     }
     
 	/* code for getting dynamic colors */
-	char FOCUS[1000] = "#dfe3e9";		/* default focused window border color */
-	char UNFOCUS[1000] = "#8e9fc0";		/* default unfocused window border color */
-
 	FILE *mmwmcolors;
 	char colorfile[] = COLORS_FILE;
 	mmwmcolors = fopen (colorfile, "r");
