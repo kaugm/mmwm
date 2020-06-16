@@ -1,13 +1,13 @@
 # mmWM
 #### Modern Minimalistic Window Manager (WIP, stripped down FrankenWM)
 
-mmWM is a dynamic window manager that is heavily based off of FrankenWM but 25% smaller. In fact, it is FrankenWM, but with many _unnecessary_ functions/features removed (and some unique features added). Its goal is to simplify your tiling workflow, with less, more logical hotkeys, and more automated window management.
+mmWM is a dynamic window manager that is heavily based off of FrankenWM but 25% smaller. In fact, it is FrankenWM, but with many _unnecessary_ functions/features removed and some unique features added. Its goal is to simplify your tiling workflow, with less, more logical hotkeys, and more automated window management.
 
 mmWM is designed to provide an aesthetic and minimalistic desktop as it prevents window overcrowding. If a desktop is _full_, mmWM will open the window on the next desktop. Likewise, if a window is the only one on a desktop, mmWM will switch to the previous desktop when the window is killed to speed up your workflow.
 
 ![mmwm thumbnail](mmwm.jpg)
 
-mmWM is lightweight. `smem` outputs USS and PSS at 384k and 438k respectively.
+mmWM is suuuuuuuper lightweight. `smem` outputs USS and PSS at 384k and 438k respectively.
 
 
 
@@ -31,7 +31,9 @@ Hotkey & function to pop a window in and out of floating mode\
 Solitary and fullscreen windows on the desktop now have borders\
 Hotkey to reset master window size
 
-Brightness and volume XF86Keysym support for laptop keys (Vendorkeys branch)
+#### Added features (other branches)
+Brightness and volume XF86Keysym support for laptop keys (Vendorkeys branch)\
+Dynamic window border colors from pywal (DynamicColors branch)
 
 #### TODO
 Update border color on the fly for theming
@@ -56,6 +58,13 @@ Configuration
 
 You can configure mmWM by editing `config.h` before compiling.\
 You can add / remove / modify functions by editing `mmwm.c` and searching for `void [function]` and making changes there.
+
+#### Dynamic window border colors with [pywal](https://github.com/dylanaraps/pywal) (DynamicColors Branch only)
+1. Add `"mmwm": "colors-mmwm.h",` after line 53 in `$HOME/.local/lib/python3.6/site-packages/pywal`
+2. Copy `colors-mmwm.h` to `$HOME/.config/wal/templates/`
+3. Run `wal` and check if `colors-mmwm.h` was generated in `$HOME/.cache/wal/`
+4. You can change the specific colors you want for the focused / unfocused borders by modifying `.../templates/colors-mmwm.h`
+
 
 Usage
 -----
