@@ -50,6 +50,7 @@ enum { _NET_WM_STATE_REMOVE, _NET_WM_STATE_ADD, _NET_WM_STATE_TOGGLE };
 #define CLEANMASK(mask) (mask & ~(numlockmask | XCB_MOD_MASK_LOCK))
 #define BUTTONMASK      XCB_EVENT_MASK_BUTTON_PRESS|XCB_EVENT_MASK_BUTTON_RELEASE
 #define ISFMFTM(c)      (c->isfullscreen || c->ismaximized || c->isfloating || c->istransient || c->isminimized || c->type != ewmh->_NET_WM_WINDOW_TYPE_NORMAL)
+#define ISFMTM(c)      (c->isfullscreen || c->ismaximized || c->istransient || c->isminimized || c->type != ewmh->_NET_WM_WINDOW_TYPE_NORMAL)
 #define USAGE           "usage: mmwm [-h] [-v]"
 #define MONITORS 1
 
@@ -173,6 +174,7 @@ typedef struct {
 #define M_SHOWPANEL   (current_display->di.showpanel)
 #define M_INVERT      (current_display->di.invert)
 #define RESET_SIZE	  MASTER_SIZE
+
 
 /* properties of each display
  * current      - the currently highlighted window
@@ -1475,7 +1477,7 @@ void killclient()
     /* this section is for switching to previous (-1) desktop when the last window on it is killed */
     /* count stack windows and grab first non-floating, non-maximize window */
     for (t = M_HEAD; t; t = M_GETNEXT(t)) {
-        if (!ISFMFTM(t)) {
+        if (!ISFMTM(t)) {
             if (c)
                 ++n;
             else
@@ -1492,7 +1494,7 @@ void killclient()
 		n = 0;
 		/* count stack windows and grab first non-floating, non-maximize window */
 		for (t = M_HEAD; t; t = M_GETNEXT(t)) {
-			if (!ISFMFTM(t)) {
+			if (!ISFMTM(t)) {
 				if (c)
 					++n;
 				else
@@ -1616,7 +1618,7 @@ void maprequest(xcb_generic_event_t *e)
     int maxwin = WIN_LIMIT - 2;
 	/* count stack windows and grab first non-floating, non-maximize window */
     for (t = M_HEAD; t; t = M_GETNEXT(t)) {
-        if (!ISFMFTM(t)) {
+        if (!ISFMTM(t)) {
             if (c)
                 ++n;
             else
@@ -1631,7 +1633,7 @@ void maprequest(xcb_generic_event_t *e)
 		n = 0;
 		/* count stack windows and grab first non-floating, non-maximize window */
 		for (t = M_HEAD; t; t = M_GETNEXT(t)) {
-			if (!ISFMFTM(t)) {
+			if (!ISFMTM(t)) {
 				if (c)
 					++n;
 				else
@@ -1672,6 +1674,7 @@ void maprequest(xcb_generic_event_t *e)
     bool visible = True;
     xcb_move(dis, c->win, -2 * M_WW, 0, &c->position_info);
     xcb_map_window(dis, c->win);
+        
     if (cd != newdsk) {
         visible = False;
         rem_node(&c->link);
@@ -2161,6 +2164,15 @@ int setup(int default_screen)
     aliens.head = NULL;
     aliens.tail = NULL;
 
+	/* code for getting dynamic colors */
+	FILE *mmwmcolors;
+	char colorfile[] = COLORS_FILE;
+	mmwmcolors = fopen (colorfile, "r");
+
+	fscanf (mmwmcolors, "%s %s", FOCUS, UNFOCUS);
+	fclose (mmwmcolors);
+	/* end code addition */
+	
     win_focus   = getcolor(FOCUS);
     win_unfocus = getcolor(UNFOCUS);
 
@@ -2683,6 +2695,18 @@ void update_current(client *newfocus)   // newfocus may be NULL
         nada();
         return;
     }
+    
+	/* code for getting dynamic colors */
+	FILE *mmwmcolors;
+	char colorfile[] = COLORS_FILE;
+	mmwmcolors = fopen (colorfile, "r");
+
+	fscanf (mmwmcolors, "%s %s", FOCUS, UNFOCUS);
+	fclose (mmwmcolors);
+
+	win_focus   = getcolor(FOCUS);
+	win_unfocus = getcolor(UNFOCUS);
+	/* end code addition */
 
 	/* Setting window borders: xcb_border_width -----> client_borders(c) */
     for (client *c = M_HEAD; c; c = M_GETNEXT(c)) {
