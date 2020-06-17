@@ -1476,18 +1476,16 @@ void killclient()
     }
     /* this section is for switching to previous (-1) desktop when the last window on it is killed */
     /* count stack windows and grab first non-floating, non-maximize window */
-
+    for (t = M_HEAD; t; t = M_GETNEXT(t)) {
+        if (!ISFMTM(t)) {
+            if (c)
+                ++n;
+            else
+                c = t;
+        }
+    }
 	/* just this line below was the original piece of code */
 	removeclient(M_CURRENT);
-	for (t = M_HEAD; t; t = M_GETNEXT(t)) {
-		if (!ISFMTM(t)) {
-			if (c)
-				++n;
-			else
-				c = t;
-		}
-	}
-	
 	while (n < 1) {
 		if (current_desktop_number == 0)
 			return;
