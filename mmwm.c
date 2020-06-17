@@ -1476,16 +1476,18 @@ void killclient()
     }
     /* this section is for switching to previous (-1) desktop when the last window on it is killed */
     /* count stack windows and grab first non-floating, non-maximize window */
-    for (t = M_HEAD; t; t = M_GETNEXT(t)) {
-        if (!ISFMTM(t)) {
-            if (c)
-                ++n;
-            else
-                c = t;
-        }
-    }
+
 	/* just this line below was the original piece of code */
 	removeclient(M_CURRENT);
+	for (t = M_HEAD; t; t = M_GETNEXT(t)) {
+		if (!ISFMTM(t)) {
+			if (c)
+				++n;
+			else
+				c = t;
+		}
+	}
+	
 	while (n < 1) {
 		if (current_desktop_number == 0)
 			return;
@@ -1602,8 +1604,8 @@ void maprequest(xcb_generic_event_t *e)
 
     DEBUG("event is valid");
 
-    bool follow = true;
-    int cd = current_desktop_number, newdsk = current_desktop_number, border_width = -1, n = 0;
+
+    int cd = current_desktop_number, border_width = -1, n = 0;
     client *t = NULL;
 
     cookie = xcb_ewmh_get_wm_name_unchecked(ewmh, ev->window);
@@ -1674,19 +1676,16 @@ void maprequest(xcb_generic_event_t *e)
     bool visible = True;
     xcb_move(dis, c->win, -2 * M_WW, 0, &c->position_info);
     xcb_map_window(dis, c->win);
-        
-    if (cd != newdsk) {
-        visible = False;
-        rem_node(&c->link);
-        select_desktop(newdsk);
-        add_tail(&current_display->clients, &c->link);
+    
+    /* code edit. if new window is transient, go to current desktop (variable was set before window was mapped)
+    * if the desktop was full, the transient window was put on the next available desktop, but is moved back to
+    * the original desktop*/
+    if (c->istransient) {
         select_desktop(cd);
-        wmdsk = newdsk;
-        if (follow) {
-            visible = True;
-            change_desktop(&(Arg){.i = newdsk});
-        }
+		change_desktop(&(Arg){.i = cd});
     }
+    /* end code addition */
+    
     if (visible && show) {
         xcb_move(dis, c->win, c->position_info.previous_x,
                               c->position_info.previous_y, NULL);
