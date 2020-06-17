@@ -270,6 +270,7 @@ static void switch_mode(const Arg *arg);
 static void tile(void);
 static void unfloat_client(client *c);
 static void update_current(client *c);
+static void update_colors();
 static void unmapnotify(xcb_generic_event_t *e);
 static void xerror(xcb_generic_event_t *e);
 static alien *wintoalien(list *l, xcb_window_t win);
@@ -2692,18 +2693,6 @@ void update_current(client *newfocus)   // newfocus may be NULL
         nada();
         return;
     }
-    
-	/* code for getting dynamic colors */
-	FILE *mmwmcolors;
-	char colorfile[] = COLORS_FILE;
-	mmwmcolors = fopen (colorfile, "r");
-
-	fscanf (mmwmcolors, "%s %s", FOCUS, UNFOCUS);
-	fclose (mmwmcolors);
-
-	win_focus   = getcolor(FOCUS);
-	win_unfocus = getcolor(UNFOCUS);
-	/* end code addition */
 
 	/* Setting window borders: xcb_border_width -----> client_borders(c) */
     for (client *c = M_HEAD; c; c = M_GETNEXT(c)) {
@@ -2763,6 +2752,33 @@ void update_current(client *newfocus)   // newfocus may be NULL
             DEBUG("send WM_TAKE_FOCUS");
         }
     }
+}
+
+void update_colors() {
+
+	/* code for getting dynamic colors */
+	FILE *mmwmcolors;
+	char colorfile[] = COLORS_FILE;
+	mmwmcolors = fopen (colorfile, "r");
+
+	fscanf (mmwmcolors, "%s %s", FOCUS, UNFOCUS);
+	fclose (mmwmcolors);
+
+	win_focus   = getcolor(FOCUS);
+	win_unfocus = getcolor(UNFOCUS);
+	/* end code addition */
+	
+	/* UPDATING COLOR: Setting window borders: xcb_border_width -----> client_borders(c) */
+    for (client *c = M_HEAD; c; c = M_GETNEXT(c)) {
+        if (!c->isfullscreen) {
+            xcb_change_window_attributes(dis, c->win, XCB_CW_BORDER_PIXEL,
+                                    (c == M_CURRENT ? &win_focus : &win_unfocus));
+            xcb_border_width(dis, c->win, client_borders(c));
+        }
+    }
+
+    tile();
+
 }
 
 static alien *wintoalien(list *l, xcb_window_t win)

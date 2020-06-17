@@ -71,6 +71,8 @@ static key keys[] = {
     {  MOD4,             XK_c,          spawn,             {.com = idecmd}},
     /* quit current window */
     {  MOD4,             XK_q,          killclient,        {NULL}},
+    /* update border colors */
+    { MOD4,				 XK_u,			update_colors,	   {NULL}},
     /* desktop selection */
        DESKTOPCHANGE(    XK_1,                             0)
        DESKTOPCHANGE(    XK_2,                             1)
