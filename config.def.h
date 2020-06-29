@@ -27,7 +27,7 @@
 #define INVERT          False     /* use alternative modes by default */
 #define AUTOCENTER      True      /* automatically center windows floating by default */
 #define OUTPUT_TITLE    False     /* output the title of the currently active window */
-#define COLORS_FILE		"/home/karl/.cache/wal/colors-mmwm.h"		/*path to any colors file. */
+#define COLORS_FILE		"$HOME/.cache/wal/colors-mmwm.h"		/*path to any colors file. */
 char FOCUS[1000] = "#dfe3e9";		/* default focused window border color */
 char UNFOCUS[1000] = "#8e9fc0";		/* default unfocused window border color */
 
