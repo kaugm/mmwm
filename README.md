@@ -6,8 +6,9 @@ mmWM is a dynamic window manager that is heavily based off of FrankenWM but 25% 
 mmWM is designed to provide an aesthetic and minimalistic desktop as it prevents window overcrowding. If a desktop is _full_, mmWM will open the window on the next desktop. Likewise, if a window is the only one on a desktop, mmWM will switch to the previous desktop when the window is killed to speed up your workflow. Additionally, mmWM supports theming from pywal.
 
 ![mmwm thumbnail](mmwm.jpg)
+![mmwm thumbnail](mmwm_rootmenu.jpg)
 
-mmWM is suuuuuuuper lightweight. `smem` outputs USS and PSS at 384k and 438k respectively.
+mmWM is suuuuuuuper lightweight. `smem` outputs USS and PSS at 388k and 438k respectively.
 
 
 
@@ -30,6 +31,7 @@ Hotkey & function to swap between the 2 main tiling modes\
 Hotkey & function to pop a window in and out of floating mode\
 Solitary and fullscreen windows on the desktop now have borders\
 Hotkey to reset master window size\
+Command executed when clicking on root window (the desktop). Can launch a program or run a script, etc\
 Dynamic window border colors from pywal or other program (not in Vendorkeys branch)
 
 #### Added features (other branches)
@@ -88,6 +90,7 @@ Thanks
 ------
 
 [FrankenWM by sulami](https://github.com/sulami/FrankenWM)\
-[Customized Panel Scripts by shmalebx9](https://github.com/shmalebx9)
+[Customized Panel Scripts by shmalebx9](https://github.com/shmalebx9)\
+[2bwm by venam](https://github.com/venam/2bwm)
 
 
