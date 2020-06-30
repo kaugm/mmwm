@@ -27,7 +27,7 @@
 #define INVERT          False     /* use alternative modes by default */
 #define AUTOCENTER      True      /* automatically center windows floating by default */
 #define OUTPUT_TITLE    False     /* output the title of the currently active window */
-#define COLORS_FILE		"$HOME/.cache/wal/colors-mmwm.h"		/*path to any colors file. */
+#define COLORS_FILE		"/home/USER/.cache/wal/colors-mmwm.h"		/*path to any colors file. */
 char FOCUS[1000] = "#dfe3e9";		/* default focused window border color */
 char UNFOCUS[1000] = "#8e9fc0";		/* default unfocused window border color */
 
@@ -35,7 +35,8 @@ char UNFOCUS[1000] = "#8e9fc0";		/* default unfocused window border color */
 #define SHCMD(cmd) {.com = (const char*[]){"/bin/sh", "-c", cmd, NULL}}
 
 /* Shell commands */
-static const char *termcmd[] = { "xterm",     NULL };
+static const char *rootwincmd[] = { "/home/USER/.bin/xmenu.sh",	NULL };
+static const char *termcmd[] = { "urxvt",     NULL };
 static const char *menucmd[] = { "rofi","-show","run", NULL };
 static const char *idecmd[] = { "code",         NULL };
 
@@ -90,9 +91,10 @@ static key keys[] = {
 
 static Button buttons[] = {
     /* move/resize using the mouse */
-    {  MOD4,    Button1,     mousemotion,   {.i = MOVE}},
-    {  MOD4,    Button3,     mousemotion,   {.i = RESIZE}},
-    {  MOD4,	Button4,	 resize_master,     {.i = +10}},
-    {  MOD4,	Button5,	 resize_master,     {.i = -10}},
+    {  MOD4,    Button1,     mousemotion,   {.i = MOVE},	false},
+    {  MOD4,    Button3,     mousemotion,   {.i = RESIZE},	false},
+    {  MOD4,	Button4,	 resize_master,     {.i = +10},	false},
+    {  MOD4,	Button5,	 resize_master,     {.i = -10},	false},
+    {  0,		Button1,	 spawn,             {.com = rootwincmd}, true},
 };
 #endif

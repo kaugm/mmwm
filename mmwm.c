@@ -120,6 +120,7 @@ typedef struct {
     unsigned int mask, button;
     void (*func)(const Arg *);
     const Arg arg;
+    const bool root_only;
 } Button;
 
 /* a client is a wrapper to a window that additionally
@@ -765,7 +766,13 @@ void buttonpress(xcb_generic_event_t *e)
 			CLEANMASK(buttons[i].mask) == CLEANMASK(ev->state)) {
 			if (M_CURRENT != c)
 				update_current(c);
-			buttons[i].func(&(buttons[i].arg));
+			if (buttons[i].root_only) {
+				if (ev->event == ev->root && ev->child == 0)
+					buttons[i].func(&(buttons[i].arg));
+			}
+			else {
+				buttons[i].func(&(buttons[i].arg));
+			}
 		}
 
     if (CLICK_TO_FOCUS) {
