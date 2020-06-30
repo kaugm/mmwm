@@ -17,12 +17,12 @@ Heavy gaps between windows\
 Slim, global borders for _all_ windows\
 No per-app rules. All windows start tiled and focused on current desktop (unless desktop is _full_)\
 Simplified, fewer, and more logical keyboard shortcuts\
-2 tiling modes: Tile (master/slave) and Equal (and floating on a per window basis)\
+2 tiling modes: Tile (main & secondary) and Equal (and floating on a per window basis)\
 Tiled windows are interacted with by the keyboard\
 Floating windows are interacted with by the mouse (except using the keyboard to pop them out and changing master window size)
 
 
-#### Added features (all branches)
+#### Added features (Main branch)
 Automated desktop switching when opening a new window in a _full_ desktop\
 Automated focusing on previous _populated_ desktop if last window on desktop is killed\
 User can define the maximum number of allowed windows per desktop\
@@ -31,11 +31,11 @@ Hotkey & function to swap between the 2 main tiling modes\
 Hotkey & function to pop a window in and out of floating mode\
 Solitary and fullscreen windows on the desktop now have borders\
 Hotkey to reset master window size\
-Command executed when clicking on root window (the desktop). Can launch a program or run a script, etc\
-Dynamic window border colors from pywal or other program (not in Vendorkeys branch)
+Command executed when clicking on root window (the desktop)\
+Dynamic window border colors from pywal or other program
 
 #### Added features (other branches)
-Brightness and volume XF86Keysym support for laptop keys (Vendorkeys branch)\
+Brightness and volume XF86Keysym support for laptop keys (Vendorkeys)\
 
 
 #### TODO
@@ -67,7 +67,7 @@ You can add / remove / modify functions by editing `mmwm.c` and searching for `v
 2. Copy `colors-mmwm.h` to `$HOME/.config/wal/templates/`
 3. Run `wal` and check if `colors-mmwm.h` was generated in `$HOME/.cache/wal/`
 4. You can change the specific colors you want for the focused / unfocused borders by modifying `.../templates/colors-mmwm.h`
-5. Window borders will be updated on the next _action_ after `wal` is run, _ex. opening a new window_
+5. Window borders can be updated with MOD4+u or by calling the update_colors function
 
 Usage
 -----
