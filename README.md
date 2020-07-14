@@ -63,7 +63,8 @@ You can configure mmWM by editing `config.h` before compiling.\
 You can add / remove / modify functions by editing `mmwm.c` and searching for `void [function]` and making changes there.
 
 #### Dynamic window border colors with [pywal](https://github.com/dylanaraps/pywal)
-1. Add `"mmwm": "colors-mmwm.h",` after line 53 in `$HOME/.local/lib/python3.6/site-packages/pywal`
+1. Add `"mmwm": "colors-mmwm.h",` after line 53 in your site-packages entry for pywal. This file is generally stored as  $HOME/.local/lib/'pythonversion'/site-packages/pywal
+locally or /usr/lib/'pythonversion'/site-packages/pywal globally. For example: `/home/kaugm/.local/lib/python3.6/site-packages/pywal`
 2. Copy `colors-mmwm.h` to `$HOME/.config/wal/templates/`
 3. Run `wal` and check if `colors-mmwm.h` was generated in `$HOME/.cache/wal/`
 4. You can change the specific colors you want for the focused / unfocused borders by modifying `.../templates/colors-mmwm.h`
