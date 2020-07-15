@@ -2172,10 +2172,10 @@ int setup(int default_screen)
 	/* code for getting dynamic colors */
 	FILE *mmwmcolors;
 	char colorfile[] = COLORS_FILE;
-	mmwmcolors = fopen (colorfile, "r");
-
-	fscanf (mmwmcolors, "%s %s", FOCUS, UNFOCUS);
-	fclose (mmwmcolors);
+	if ((mmwmcolors = fopen (colorfile, "r"))){
+		fscanf (mmwmcolors, "%s %s", FOCUS, UNFOCUS);
+		fclose (mmwmcolors);
+	}
 	/* end code addition */
 	
     win_focus   = getcolor(FOCUS);
@@ -2766,14 +2766,14 @@ void update_colors() {
 	/* code for getting dynamic colors */
 	FILE *mmwmcolors;
 	char colorfile[] = COLORS_FILE;
-	mmwmcolors = fopen (colorfile, "r");
-
-	fscanf (mmwmcolors, "%s %s", FOCUS, UNFOCUS);
-	fclose (mmwmcolors);
-
-	win_focus   = getcolor(FOCUS);
-	win_unfocus = getcolor(UNFOCUS);
+	if ((mmwmcolors = fopen (colorfile, "r"))){
+		fscanf (mmwmcolors, "%s %s", FOCUS, UNFOCUS);
+		fclose (mmwmcolors);
+	}
 	/* end code addition */
+	
+    win_focus   = getcolor(FOCUS);
+    win_unfocus = getcolor(UNFOCUS);
 	
 	/* UPDATING COLOR: Setting window borders: xcb_border_width -----> client_borders(c) */
     for (client *c = M_HEAD; c; c = M_GETNEXT(c)) {
