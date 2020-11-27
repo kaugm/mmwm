@@ -1,24 +1,15 @@
-# mmWM Examples
-#### more fully featured example panel scripts for lemonbar
-## Requires
-- lemonbar-xft
-- acpid
-- [Remix Icons](https://github.com/Remix-Design/RemixIcon/blob/master/fonts/remixicon.ttf) for akita script
+# mmWM Screenshot Examples
 
 #### Screenshots
 ![thumbnail](mmwm.jpg)
 ![thumbnail](mmwm_rootmenu.jpg)
 
-
-#### Akita
+#### Community Submitted (All below)
 ![mmwmrice thumbnail](akita_mmwm.png)
-
-#### Bruno
 ![mmwmrice thumbnail](bruno_mmwm.png)
 
 Credits
 ------
-
 some bar scripts and inspiration from
 [fsfg](https://gitlab.com/fsfg/dotfiles/)
 [nan0s7](https://github.com/nan0s7/drowsylemon)
@@ -38,7 +29,6 @@ Wifi Icons made by [Prettycons](https://www.flaticon.com/authors/prettycons) fro
 Cpu Icon made by [Monkik](https://www.flaticon.com/authors/monkik) from www.flaticon.com
 Wifi Icons made by [Those Icons](https://www.flaticon.com/authors/those-icons) from www.flaticon.com
 Wifi Icons made by [Pixel Perfect](https://www.flaticon.com/authors/pixel-perfect) from www.flaticon.com
-
-[MMWM by kagum](https://github.com/kaugm/mmwm)
+Remix Icons [Remix Icons](https://github.com/Remix-Design/RemixIcon/blob/master/fonts/remixicon.ttf)
 
 
