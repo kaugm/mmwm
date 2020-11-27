@@ -7,16 +7,10 @@
 #### Community Submitted (All below)
 ![mmwmrice thumbnail](akita_mmwm.png)
 ![mmwmrice thumbnail](bruno_mmwm.png)
-
-Credits
-------
+^^
 some bar scripts and inspiration from
 [fsfg](https://gitlab.com/fsfg/dotfiles/)
 [nan0s7](https://github.com/nan0s7/drowsylemon)
-
-
-The icon font is created entirely from free icons not made by me. The icon font is made up of the following:
-
 volume and clock Icons made by [Pixelmeetup](https://www.flaticon.com/authors/pixelmeetup) from www.flaticon.com
 Battery Icons made by [phatplus](https://www.flaticon.com/authors/phatplus) from www.flaticon.com
 Battery, date, and cpu Icons made by [Smashicons](https://www.flaticon.com/authors/smashicons) from www.flaticon.com
