@@ -1,0 +1,95 @@
+#### Dynamic window border colors with [pywal](https://github.com/dylanaraps/pywal)
+
+Previous versions of mmWM supported dynamic window border colors via pywal, but this has been removed. To re-add it, modify the mmwm.c and config.h file
+
+
+MODIFYING MMWM
+
+
+1. Within the 'int setup' function, immediately above the declaration of win_focus & win_unfocus variables, add:
+
+	/* code for getting dynamic colors */
+	FILE *mmwmcolors;
+	char colorfile[] = COLORS_FILE;
+		if ((mmwmcolors = fopen (colorfile, "r"))){
+		fscanf (mmwmcolors, "%s %s", FOCUS, UNFOCUS);
+		fclose (mmwmcolors);
+	}
+
+	win_focus   = getcolor(FOCUS);
+	win_unfocus = getcolor(UNFOCUS);
+	/* end code addition */
+
+
+2. Within the 'void update_current' function, add:
+
+	/* code for getting dynamic colors */
+	FILE *mmwmcolors;
+	char colorfile[] = COLORS_FILE;
+	if ((mmwmcolors = fopen (colorfile, "r"))){
+		fscanf (mmwmcolors, "%s %s", FOCUS, UNFOCUS);
+		fclose (mmwmcolors);
+	}
+
+	win_focus   = getcolor(FOCUS);
+	win_unfocus = getcolor(UNFOCUS);
+	/* end code addition */
+
+
+3. Define a COLORS_FILE variable in config.h and add the default window borders colors:
+
+	char FOCUS[1000] = "#dfe3e9";		/* default focused window border color */
+	char UNFOCUS[1000] = "#8e9fc0";		/* default unfocused window border color */
+	#define COLORS_FILE		"/home/USER/.cache/wal/colors-mmwm.h"		/*path to any colors file. */
+
+
+4.a. [OPTIONAL] Add an update function to mmwm.c to update all open windows' border colors when a new theme has been set:
+
+	static void update_colors();
+
+
+	void update_colors() {
+		/* code for getting dynamic colors */
+		FILE *mmwmcolors;
+		char colorfile[] = COLORS_FILE;
+		if ((mmwmcolors = fopen (colorfile, "r"))){
+			fscanf (mmwmcolors, "%s %s", FOCUS, UNFOCUS);
+			fclose (mmwmcolors);
+		}
+
+		win_focus   = getcolor(FOCUS);
+		win_unfocus = getcolor(UNFOCUS);
+		/* end code addition */
+
+		/* UPDATING COLOR: Setting window borders: xcb_border_width -----> client_borders(c) */
+    	for (client *c = M_HEAD; c; c = M_GETNEXT(c)) {
+       	 if (!c->isfullscreen) {
+            xcb_change_window_attributes(dis, c->win, XCB_CW_BORDER_PIXEL,
+                                    (c == M_CURRENT ? &win_focus : &win_unfocus));
+            xcb_border_width(dis, c->win, client_borders(c));
+        }
+    	}
+    	tile();
+	}
+
+
+4.b. [OPTIONAL] Add a hotkey to call update_colors function to config.h:
+
+    /* update border colors */
+    { MOD4,				 XK_u,			update_colors,	   {NULL}},
+
+
+
+5. Install pywal and do the following:
+
+
+	5.a. Add `"mmwm": "colors-mmwm.h",` after line 53 in your site-packages entry for pywal. This file is generally stored as  $HOME/.local/lib/'pythonversion'/site-packages/pywal
+		locally or /usr/lib/'pythonversion'/site-packages/pywal globally. For example: `/home/kaugm/.local/lib/python3.6/site-packages/pywal`
+	5.b. Copy `colors-mmwm.h` to `$HOME/.config/wal/templates/`
+	5.c. Run `wal` and check if `colors-mmwm.h` was generated in `$HOME/.cache/wal/`
+	5.d. You can change the specific colors you want for the focused / unfocused borders by modifying `.../templates/colors-mmwm.h`
+	5.e. Window borders can be updated with MOD4+u or by calling the update_colors function
+
+
+
+
