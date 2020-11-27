@@ -1,9 +1,13 @@
-# mmWM Rice
+# mmWM Examples
 #### more fully featured example panel scripts for lemonbar
 ## Requires
 - lemonbar-xft
 - acpid
 - [Remix Icons](https://github.com/Remix-Design/RemixIcon/blob/master/fonts/remixicon.ttf) for akita script
+
+#### Screenshots
+![thumbnail](mmwm.jpg)
+![thumbnail](mmwm_rootmenu.jpg)
 
 
 #### Akita
