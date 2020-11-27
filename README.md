@@ -1,14 +1,14 @@
 # mmWM
 #### Modern Minimalistic Window Manager
 
-mmWM is a dynamic window manager that is heavily based off of FrankenWM but 25% smaller. In fact, it is FrankenWM, but with many _unnecessary_ features stripped out, and others added . Its goal is to simplify your tiling workflow, with less, more logical hotkeys, and more automated window management.
+mmWM is a dynamic window manager that is heavily based off of FrankenWM but 25% smaller. In fact, it is FrankenWM, but with many _unnecessary_ features stripped out, and others added. Its goal is to simplify your tiling workflow, with less, more logical hotkeys, and more automated window management.
 
-mmWM is designed to provide an aesthetic and minimalistic desktop as it prevents window overcrowding. If a desktop is _full_, mmWM will open the window on the next desktop. Likewise, if a window is the only one on a desktop, mmWM will switch to the previous desktop when the window is killed to speed up your workflow. Additionally, mmWM supports theming from pywal.
+mmWM is designed to provide an aesthetic and minimalistic desktop that prevents window overcrowding. If a desktop is _full_, mmWM will open the window on the next desktop. Likewise, if a window is the only one on a desktop, mmWM will switch to the previous desktop when the window is killed to speed up your workflow. Additionally, mmWM supports theming from pywal.
 
-![mmwm thumbnail](mmwm.jpg)
-![mmwm thumbnail](mmwm_rootmenu.jpg)
+![mmwm thumbnail](mmwm1.jpg)
+![mmwm thumbnail](mmwm2.jpg)
 
-mmWM is suuuuuuuper lightweight. `smem` outputs USS and PSS at 388k and 438k respectively.
+mmWM is lightweight. `smem` outputs USS and PSS at 368k and 409k respectively.
 
 
 
