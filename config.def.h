@@ -8,37 +8,32 @@
 #define SHIFT           ShiftMask   /* Shift key */
 
 /* General settings */
-#define MASTER_SIZE     0.5       /* master-stack ratio */
-#define SHOW_PANEL      True      /* show panel by default on exec */
-#define TOP_PANEL       True      /* False means panel is on bottom */
-#define PANEL_HEIGHT    30        /* 0 for no space for panel, thus no panel */
-#define DEFAULT_MODE    TILE     /* TILE EQUAL */
+#define MASTER_SIZE     0.50       /* master-stack ratio */
+#define SHOW_PANEL      False      /* show panel by default on exec */
+#define TOP_PANEL       False      /* False means panel is on bottom */
+#define PANEL_HEIGHT    0        /* 0 for no space for panel, thus no panel */
 #define ATTACH_ASIDE    True      /* False means new window is master */
 #define FOLLOW_MOUSE    False     /* Focus the window the mouse just entered */
 #define FOLLOW_WINDOW   True     /* Follow the window when moved to a different desktop */
 #define CLICK_TO_FOCUS  True      /* Focus an unfocused window when clicked */
 #define WIN_LIMIT		3		  /* Maximum number of windows allowed per desktop */
-#define BORDER_WIDTH    12         /* window border width */
+#define BORDER_WIDTH    0         /* window border width */
 #define DESKTOPS        10        /* number of desktops - edit DESKTOPCHANGE keys to suit */
 #define DEFAULT_DESKTOP 0         /* the desktop to focus on exec */
 #define MINWSZ          50        /* minimum window size in pixels */
-#define USELESSGAP      128         /* the size of the useless gap in pixels */
+#define USELESSGAP      64         /* the size of the useless gap in pixels */
 #define GLOBALGAPS      True      /* use the same gap size on all desktops */
 #define INVERT          False     /* use alternative modes by default */
 #define AUTOCENTER      True      /* automatically center windows floating by default */
-#define OUTPUT_TITLE    False     /* output the title of the currently active window */
-#define COLORS_FILE		"/home/USER/.cache/wal/colors-mmwm.h"		/*path to any colors file. */
-char FOCUS[1000] = "#dfe3e9";		/* default focused window border color */
-char UNFOCUS[1000] = "#8e9fc0";		/* default unfocused window border color */
+#define FOCUS           "#dfe3e9"		/* default focused window border color */
+#define UNFOCUS         "#8e9fc0"		/* default unfocused window border color */
 
 /* Shell command helper - DO NOT EDIT */
 #define SHCMD(cmd) {.com = (const char*[]){"/bin/sh", "-c", cmd, NULL}}
 
 /* Shell commands */
-static const char *rootwincmd[] = { "/home/USER/.bin/xmenu.sh",	NULL };
-static const char *termcmd[] = { "urxvt",     NULL };
-static const char *menucmd[] = { "rofi","-show","run", NULL };
-static const char *idecmd[] = { "code",         NULL };
+static const char *rootwincmd[] = { "xterm",	NULL };
+static const char *termcmd[] = { "xterm",     NULL };
 
 #define DESKTOPCHANGE(K,N) \
     {  MOD4,             K,              change_desktop, {.i = N}}, \
@@ -62,18 +57,13 @@ static key keys[] = {
     {  MOD4,             XK_i,          invertstack,       {NULL}},
     /* resets the size of the master window */
     {  MOD4,			 XK_r,			reset_master,	   {NULL}},
-    /* change tiling mode: TILE or EQUAL */
-    {  MOD4|SHIFT,       XK_t,          switch_mode,       {.i = TILE}},
-    {  MOD4|SHIFT,       XK_e,          switch_mode,       {.i = EQUAL}},
-    {  MOD4,			 XK_m,			swap_modes,	   	   {NULL}},
+    /* change tiling mode or floating mode */
+    {  MOD4,             XK_t,          switch_mode,       {.i = TILE}},
+
     /* spawn terminal, dmenu, anything you want to */
     {  MOD4,             XK_Return,     spawn,             {.com = termcmd}},
-    {  MOD4,             XK_d,          spawn,             {.com = menucmd}},
-    {  MOD4,             XK_c,          spawn,             {.com = idecmd}},
     /* quit current window */
     {  MOD4,             XK_q,          killclient,        {NULL}},
-    /* update border colors */
-    { MOD4,				 XK_u,			update_colors,	   {NULL}},
     /* desktop selection */
        DESKTOPCHANGE(    XK_1,                             0)
        DESKTOPCHANGE(    XK_2,                             1)

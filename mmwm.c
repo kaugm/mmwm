@@ -55,7 +55,7 @@ enum { _NET_WM_STATE_REMOVE, _NET_WM_STATE_ADD, _NET_WM_STATE_TOGGLE };
 #define MONITORS 1
 
 enum { RESIZE, MOVE };
-enum { TILE, EQUAL, MODES };
+enum { TILE, MODES };
 
 /* argument structure to be passed to function by config.h
  * com  - a command to run
@@ -231,7 +231,6 @@ static bool deletewindow(xcb_window_t w);
 static void desktopinfo(void);
 static void destroynotify(xcb_generic_event_t *e);
 static void enternotify(xcb_generic_event_t *e);
-static void equal(int h, int y);
 static client *find_client(xcb_window_t w);
 static desktop *find_desktop(unsigned int n);
 static void float_client(client *c);
@@ -254,7 +253,6 @@ static void quit(const Arg *arg);
 static void removeclient(client *c);
 static void resize_master(const Arg *arg);
 static void reset_master();
-static void swap_modes();
 static void run(void);
 static void select_desktop(int i);
 static bool sendevent(xcb_window_t win, xcb_atom_t proto);
@@ -271,7 +269,6 @@ static void switch_mode(const Arg *arg);
 static void tile(void);
 static void unfloat_client(client *c);
 static void update_current(client *c);
-static void update_colors();
 static void unmapnotify(xcb_generic_event_t *e);
 static void xerror(xcb_generic_event_t *e);
 static alien *wintoalien(list *l, xcb_window_t win);
@@ -336,7 +333,6 @@ static void (*events[XCB_NO_OPERATION])(xcb_generic_event_t *e);
  * y (or cy) - offset from top to place the windows (reserved by the panel) */
 static void (*layout[MODES])(int h, int y) = {
     [TILE] = stack,
-    [EQUAL] = equal,
 };
 
 /*
@@ -1239,9 +1235,6 @@ void desktopinfo(void)
                 urgent = true;
         fprintf(stdout, "%d:%d:%d:%d:%d ", d, n, M_MODE, current_desktop_number == cd,
                 urgent);
-        if (d + 1 == DESKTOPS)
-            fprintf(stdout, "%s\n", M_CURRENT && OUTPUT_TITLE && wtitle.strings ?
-                    wtitle.strings : "");
     }
 
     if (wtitle.strings) {
@@ -1333,35 +1326,6 @@ void enternotify(xcb_generic_event_t *e)
 	}
 }
 
-void equal(int h, int y)
-{
-    int n = 0, j = -1;
-
-    for (client *c = M_HEAD; c; c = M_GETNEXT(c)) {
-        if (ISFMFTM(c))
-            continue;
-        n++;
-    }
-
-    for (client *c = M_HEAD; c; c = M_GETNEXT(c)) {
-        int borders = client_borders(c);
-        if (ISFMFTM(c))
-            continue;
-        else
-            j++;
-        if (M_INVERT)
-            xcb_move_resize(dis, c->win, M_GAPS,
-                            y + h / n * j + (c == M_HEAD ? M_GAPS : 0),
-                            M_WW - 2 * borders - 2 * M_GAPS,
-                            h / n - 2 * borders - (c == M_HEAD ? 2 : 1) * M_GAPS, &c->position_info);
-        else
-            xcb_move_resize(dis, c->win, M_WW / n * j + (c == M_HEAD ? M_GAPS : 0),
-                            y + M_GAPS,
-                            M_WW / n - 2 * borders - (c == M_HEAD ? 2 : 1) * M_GAPS,
-                            h - 2 * borders - 2 * M_GAPS, &c->position_info);
-    }
-}
-
 /* switch a client from tiling to float and manage everything involved */
 void float_client(client *c)
 {
@@ -1447,10 +1411,8 @@ void grabkeys(void)
 /* invert v-stack left-right */
 void invertstack()
 {
-	if (M_MODE != EQUAL) {
-		    M_INVERT = !M_INVERT;
-    		tile();
-	}
+	M_INVERT = !M_INVERT;
+    tile();
 }
 
 /* on the press of a key check to see if there's a binded function to call */
@@ -2168,15 +2130,6 @@ int setup(int default_screen)
 
     aliens.head = NULL;
     aliens.tail = NULL;
-
-	/* code for getting dynamic colors */
-	FILE *mmwmcolors;
-	char colorfile[] = COLORS_FILE;
-	if ((mmwmcolors = fopen (colorfile, "r"))){
-		fscanf (mmwmcolors, "%s %s", FOCUS, UNFOCUS);
-		fclose (mmwmcolors);
-	}
-	/* end code addition */
 	
     win_focus   = getcolor(FOCUS);
     win_unfocus = getcolor(UNFOCUS);
@@ -2363,7 +2316,7 @@ int setup(int default_screen)
     }
 
     change_desktop(&(Arg){.i = DEFAULT_DESKTOP});
-    switch_mode(&(Arg){.i = DEFAULT_MODE});
+    switch_mode(&(Arg){.i = TILE});
 
 #ifdef EWMH_TASKBAR
     Setup_EWMH_Taskbar_Support();
@@ -2408,7 +2361,7 @@ static void setup_display(void)
 
             /* disp->di.master_size = MASTER_SIZE; */
             disp->di.gaps = USELESSGAP;
-            disp->di.mode = DEFAULT_MODE;
+            disp->di.mode = TILE;
             disp->di.showpanel = SHOW_PANEL;
             disp->di.invert = INVERT;
         }
@@ -2582,21 +2535,6 @@ void switch_mode(const Arg *arg)
     desktopinfo();
 }
 
-void swap_modes()
-{
-	if (M_MODE == TILE) {
-		M_MODE = EQUAL;
-		if (M_INVERT)
-			M_INVERT = !M_INVERT;
-	}
-	else {
-		M_MODE = TILE;
-	}
-	tile();
-    update_current(M_CURRENT);
-    desktopinfo();
-}
-
 /* tile all windows of current desktop - call the handler tiling function */
 void tile(void)
 {
@@ -2759,33 +2697,6 @@ void update_current(client *newfocus)   // newfocus may be NULL
             DEBUG("send WM_TAKE_FOCUS");
         }
     }
-}
-
-void update_colors() {
-
-	/* code for getting dynamic colors */
-	FILE *mmwmcolors;
-	char colorfile[] = COLORS_FILE;
-	if ((mmwmcolors = fopen (colorfile, "r"))){
-		fscanf (mmwmcolors, "%s %s", FOCUS, UNFOCUS);
-		fclose (mmwmcolors);
-	}
-	/* end code addition */
-	
-    win_focus   = getcolor(FOCUS);
-    win_unfocus = getcolor(UNFOCUS);
-	
-	/* UPDATING COLOR: Setting window borders: xcb_border_width -----> client_borders(c) */
-    for (client *c = M_HEAD; c; c = M_GETNEXT(c)) {
-        if (!c->isfullscreen) {
-            xcb_change_window_attributes(dis, c->win, XCB_CW_BORDER_PIXEL,
-                                    (c == M_CURRENT ? &win_focus : &win_unfocus));
-            xcb_border_width(dis, c->win, client_borders(c));
-        }
-    }
-
-    tile();
-
 }
 
 static alien *wintoalien(list *l, xcb_window_t win)
