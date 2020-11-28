@@ -1,9 +1,9 @@
 # mmWM
 #### Modern Minimalistic Window Manager
 
-mmWM is a dynamic window manager that is heavily based off of FrankenWM but 25% smaller. In fact, it is FrankenWM, but with many _unnecessary_ features stripped out, and others added. Its goal is to simplify your tiling workflow, with less, more logical hotkeys, and more automated window management.
+mmWM is a dynamic window manager that is heavily based off of FrankenWM but with many _unnecessary_ features stripped out, and others added. Its goal is to simplify your tiling workflow, with less, more logical hotkeys, and more automated window management.
 
-mmWM is designed to provide an aesthetic and minimalistic desktop that prevents window overcrowding. If a desktop is _full_, mmWM will open the window on the next desktop. Likewise, if a window is the only one on a desktop, mmWM will switch to the previous desktop when the window is killed to speed up your workflow.
+mmWM attempts to automate desktop switching when working with multiple windows. If a desktop is _full_, mmWM will open the window on the next desktop. Likewise, if a window is the only one on a desktop, mmWM will switch to the previous desktop when the window is killed to speed up your workflow.
 
 ![mmwm thumbnail](mmwm1.png)
 ![mmwm thumbnail](mmwm2.png)
@@ -11,26 +11,24 @@ mmWM is designed to provide an aesthetic and minimalistic desktop that prevents 
 mmWM is lightweight. `smem` outputs USS and PSS at 368k and 409k respectively.
 
 #### Modern and Minimalist Approach
+Standard WM features (Can be toggled On/Off): Borders, Gaps, Panel, Follow Mouse, Multiple Desktops\
 No per-app rules. All windows start tiled and focused on current desktop (unless desktop is _full_)\
 Simplified, fewer, and more logical keyboard shortcuts. All are {MOD4 + Single Key}\
 Single Tiling mode: Main window + secondary & tertiary on the side
 Tiled windows are interacted with by the keyboard\
 Floating windows are interacted with by the mouse (except using the keyboard to pop them out and changing master window size)
 
-Standard WM features (Can be toggled On/Off): Borders, Gaps, Panel, Follow Mouse, Multiple Desktops\
-
-
 #### Added features
 Automated desktop switching when opening a new window in a _full_ desktop\
 Automated focusing on previous _populated_ desktop if last window on desktop is killed\
 User can define the maximum number of allowed windows per desktop\
-Hotkey & function to pop a window in and out of floating mode\
 Hotkey to reset master window size\
-Command executed when clicking on root window (the desktop)\
+Hotkey to toggle monocle mode\
+Command executed when clicking on root window (the desktop)
 
 #### Other features
 Brightness and volume XF86Keysym support for laptop keys (see Vendorkeys branch for code addition)\
-Pywal Support (Must add this in manually. Follow add_pywal_support.txt\
+Pywal Support (Must add this in manually. Follow add_pywal_support.txt
 
 
 #### TODO
