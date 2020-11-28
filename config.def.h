@@ -21,7 +21,7 @@
 #define DESKTOPS        10        /* number of desktops - edit DESKTOPCHANGE keys to suit */
 #define DEFAULT_DESKTOP 0         /* the desktop to focus on exec */
 #define MINWSZ          50        /* minimum window size in pixels */
-#define USELESSGAP      64         /* the size of the useless gap in pixels */
+#define USELESSGAP      128         /* the size of the useless gap in pixels */
 #define GLOBALGAPS      True      /* use the same gap size on all desktops */
 #define INVERT          False     /* use alternative modes by default */
 #define AUTOCENTER      True      /* automatically center windows floating by default */
@@ -50,16 +50,15 @@ static key keys[] = {
     /* swap the current tiled window with the master */
     {  MOD4,             XK_w,          swap_master,       {NULL}},
     /* maximize toggle for the current window */
-    {  MOD4,             XK_f,          maximize,          {NULL}},
-    /* float focused window and center it */
-    {  MOD4,             XK_j,          popout,            {NULL}},
+    {  MOD4,             XK_m,          maximize,          {NULL}},
     /* toggles inverted stacking of slave windows for TILE layout */
     {  MOD4,             XK_i,          invertstack,       {NULL}},
     /* resets the size of the master window */
     {  MOD4,			 XK_r,			reset_master,	   {NULL}},
-    /* change tiling mode or floating mode */
+    /* Retile floating windows */
     {  MOD4,             XK_t,          switch_mode,       {.i = TILE}},
-
+    /* Toggle focused window fullscreen, by adjusting thte gaps */
+    {  MOD4,             XK_f,          adjust_gaps,       {NULL}},
     /* spawn terminal, dmenu, anything you want to */
     {  MOD4,             XK_Return,     spawn,             {.com = termcmd}},
     /* quit current window */

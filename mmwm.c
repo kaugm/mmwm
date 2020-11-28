@@ -213,12 +213,11 @@ typedef struct lifo {
 
  /* function prototypes sorted alphabetically */
 static client *addwindow(xcb_window_t w, xcb_atom_t wtype);
+static void adjust_gaps();
 static void buttonpress(xcb_generic_event_t *e);
 static void change_desktop(const Arg *arg);
 static bool check_if_window_is_alien(xcb_window_t win, bool *isFloating, xcb_atom_t *wtype);
 static bool check_wmproto(xcb_window_t win, xcb_atom_t proto);
-static void centerfloating(client *c);
-static void popout();
 static void cleanup(void);
 static void cleanup_display(void);
 static int client_borders(const client *c);
@@ -745,6 +744,40 @@ client *addwindow(xcb_window_t win, xcb_atom_t wtype)
     return c;
 }
 
+/* Toggle between gaps = 0 and defined value */
+void adjust_gaps()
+{
+    int gaps = M_GAPS;
+
+    if (gaps > 0)
+        gaps -= USELESSGAP;
+    else
+        gaps += USELESSGAP;
+
+    /*if (arg->i > 0 || gaps >= -arg->i)
+        gaps += arg->i;
+    else
+        return;*/
+
+    if (GLOBALGAPS) {
+        desktop *desk;
+        for (desk = (desktop *)get_head(&desktops); desk; desk = (desktop *)get_next(&desk->link)) {
+            monitor *moni;
+            for (moni = (monitor *)get_head(&desk->monitors); moni; moni = (monitor *)get_next(&moni->link)) {
+                display *disp;
+                for (disp = (display *)get_head(&moni->displays); disp; disp = (display *)get_next(&disp->link)) {
+                    disp->di.gaps = gaps;
+                }
+            }
+        }
+    }
+    else
+        M_GAPS = gaps;
+
+    tile();
+    maximize();
+}
+
 /* on the press of a button check to see if there's a binded function to call */
 void buttonpress(xcb_generic_event_t *e)
 {
@@ -895,38 +928,6 @@ print_window_type(win, type.atoms[i]);
         create_alien(win, atype);
 
     return isAlien;
-}
-
-/*
- * place a floating client in the center of the screen
- */
-static void centerfloating(client *c)
-{
-    if (!c || !c->isfloating)
-        return;
-
-    xcb_get_geometry_reply_t *wa = get_geometry(c->win);
-    xcb_raise_window(dis, c->win);
-    xcb_move(dis, c->win, ((M_WW - wa->width) / 2) - c->borderwidth,
-                     ((M_WH - wa->height) / 2) - c->borderwidth, &c->position_info);
-    free(wa);
-}
-
-void popout()
-{
-	if (!M_CURRENT)
-		return;
-	if (!M_CURRENT->isfloating && !M_CURRENT->istransient) {
-		float_client(M_CURRENT);
-		centerfloating(M_CURRENT);
-		tile();
-	}
-	else {
-		unfloat_client(M_CURRENT);
-		tile();
-    	update_current(M_CURRENT);
-    	desktopinfo();
-    }
 }
 
 /* remove all windows in all desktops by sending a delete message */
@@ -1660,8 +1661,6 @@ void maprequest(xcb_generic_event_t *e)
         c->position_info.previous_x = c->position_info.current_x;
         c->position_info.previous_y = c->position_info.current_y;
         update_current(c);
-        if (c->isfloating && AUTOCENTER)
-            centerfloating(c);
     }
     xcb_ewmh_set_wm_desktop(ewmh, c->win, wmdsk);
     grabbuttons(c);
