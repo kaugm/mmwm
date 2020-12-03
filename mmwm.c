@@ -748,11 +748,30 @@ client *addwindow(xcb_window_t win, xcb_atom_t wtype)
 void adjust_gaps()
 {
     int gaps = M_GAPS;
+    int n = 0;
+	client *c = NULL, *t = NULL;
 
-    if (gaps > 0)
+    /* count stack windows and grab first non-floating, non-maximize window */
+    for (t = M_HEAD; t; t = M_GETNEXT(t)) {
+        if (!ISFMTM(t)) {
+            if (c)
+                ++n;
+            else
+                c = t;
+        }
+    }
+
+    if (gaps > 0) {
+        if (n < 1) {
+            borders -= BORDER_WIDTH;
+        }
         gaps -= USELESSGAP;
-    else
-        gaps += USELESSGAP;
+    }
+    else {
+        gaps = USELESSGAP;
+        borders = BORDER_WIDTH;
+    }
+
 
     /*if (arg->i > 0 || gaps >= -arg->i)
         gaps += arg->i;
@@ -775,6 +794,7 @@ void adjust_gaps()
         M_GAPS = gaps;
 
     tile();
+    update_current(M_CURRENT);
 }
 
 /* on the press of a button check to see if there's a binded function to call */
