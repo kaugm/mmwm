@@ -775,7 +775,6 @@ void adjust_gaps()
         M_GAPS = gaps;
 
     tile();
-    maximize();
 }
 
 /* on the press of a button check to see if there's a binded function to call */
