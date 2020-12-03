@@ -1,9 +1,7 @@
 # mmWM
 #### Modern Minimalistic Window Manager
 
-mmWM is a dynamic window manager that is heavily based off of FrankenWM but with many _unnecessary_ features stripped out, and others added. Its goal is to simplify your workflow, with less, more logical hotkeys, and more automated window management.
-
-mmWM attempts to automate desktop switching when working with multiple windows. If a desktop is _full_, mmWM will open the window on the next desktop. Likewise, if a window is the only one on a desktop, mmWM will switch to the previous desktop when the window is killed.
+mmWM is a dynamic window manager that is heavily based off of FrankenWM but with many _unnecessary_ features stripped out, and others added. Its goal is to simplify your workflow with some automated window management and less, more logical hotkeys.
 
 ![mmwm thumbnail](mmwm1.png)
 ![mmwm thumbnail](mmwm2.png)
@@ -11,17 +9,15 @@ _Menu on desktop is [xmenu](https://github.com/phillbush/xmenu)_
 
 mmWM is lightweight. `smem` outputs USS and PSS at 368k and 409k respectively.
 
-#### Modern and Minimalist Approach
+#### Minimalist Approach to Basic WM Features
 Standard WM features (Can be toggled On/Off): Borders, Gaps, Panel, Follow Mouse, Multiple Desktops\
 No per-app rules. All windows start tiled and focused on current desktop (unless desktop is _full_)\
 Simplified, fewer, and more logical keyboard shortcuts following the pattern: {MOD4 + Single Key}\
 Single Tiling mode: Main window + secondary & tertiary on the side
-Tiled windows are interacted with by the keyboard\
-Floating windows are interacted with by the mouse
 
 #### Added features
-Automated desktop switching when opening a new window in a _full_ desktop\
-Automated focusing on previous _populated_ desktop if last window on desktop is killed\
+Automatic switch to next open desktop when opening a new window in a _full_ desktop\
+Automatic switch to previous _populated_ desktop if last window on desktop is killed\
 User defined maximum allowed windows per desktop\
 A _smart_ gapless mode\
 Command executed when clicking on root window / desktop
