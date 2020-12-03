@@ -22,9 +22,9 @@ Floating windows are interacted with by the mouse
 #### Added features
 Automated desktop switching when opening a new window in a _full_ desktop\
 Automated focusing on previous _populated_ desktop if last window on desktop is killed\
-User can define the maximum number of allowed windows per desktop\
-A _true_ monocle mode\
-Command executed when clicking on root window (the desktop)
+User defined maximum allowed windows per desktop\
+A _smart_ gapless mode\
+Command executed when clicking on root window / desktop
 
 #### Other features
 Brightness and volume XF86Keysym support for laptop keys (see Vendorkeys branch for code addition)\
